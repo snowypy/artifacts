@@ -22,6 +22,10 @@
       "@/*": ["./*"]
     }
   },
-  "include": ["next-env.d.ts", "**/*.ts", "**/*.tsx", ".next/types/**/*.ts", "app/views/NodesPage.jsx", "app/views/MainLayout.jsx", "app/views/HomePage.jsx", "app/views/LoginPage.jsx", "app/views/ArtifactPage.jsx", "app/views/AccountPage.jsx"],
+  "include": ["next-env.d.ts", "**/*.ts", "**/*.tsx", ".next/types/**/*.ts",
+    "app/nodes/page", "app/views/MainLayout.jsx", "app/views/HomePage.jsx",
+    "app/login/page", "app/views/ArtifactPage.jsx",
+    "app/account/page"
+  ],
   "exclude": ["node_modules"]
 }

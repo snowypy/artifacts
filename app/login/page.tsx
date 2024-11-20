@@ -23,7 +23,7 @@ export default function LoginPage() {
         <div className="container mx-auto px-4 py-4 flex justify-between items-center">
           <Link href="/" className="text-2xl font-bold flex items-center text-foreground">
             <Package className="mr-2" />
-            ByteStream
+            ByteStore
           </Link>
           <nav>
             <ul className="flex space-x-4">
@@ -37,9 +37,9 @@ export default function LoginPage() {
       <main className="flex-grow flex items-center justify-center bg-background">
         <Card className="w-full max-w-md bg-card">
           <CardHeader className="space-y-1">
-            <CardTitle className="text-2xl text-center">Sign in to ByteStream</CardTitle>
+            <CardTitle className="text-2xl text-center">Sign in to ByteStore</CardTitle>
             <CardDescription className="text-center">
-              Use your GitHub account to access ByteStream
+              Use your GitHub account to access ByteStore
             </CardDescription>
           </CardHeader>
           <CardContent className="flex justify-center">
@@ -82,7 +82,7 @@ export default function LoginPage() {
 
       <footer className="border-t border-border/40">
         <div className="container mx-auto px-4 py-6 text-center text-sm text-muted-foreground">
-          Â© {new Date().getFullYear()} ByteStream. All rights reserved.
+            © {new Date().getFullYear()} ByteStore. All rights reserved.
         </div>
       </footer>
     </div>

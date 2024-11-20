@@ -7,7 +7,7 @@ export default function AccountPage() {
   const user = {
     name: 'John Doe',
     username: 'johndoe',
-    avatarUrl: '/placeholder.svg?height=100&width=100',
+    avatarUrl: 'https://avatars.githubusercontent.com/u/133208096?v=4',
   }
 
   const metrics = {
@@ -28,7 +28,7 @@ export default function AccountPage() {
         <div className="container mx-auto px-4 py-4 flex justify-between items-center">
           <Link href="/" className="text-2xl font-bold flex items-center text-foreground">
             <Package className="mr-2" />
-            ByteStream
+            ByteStore
           </Link>
           <Button variant="ghost" className="flex items-center">
             <LogOut className="mr-2 h-4 w-4" />
@@ -121,7 +121,7 @@ export default function AccountPage() {
 
       <footer className="border-t border-border mt-12">
         <div className="container mx-auto px-4 py-6 text-center text-sm text-muted-foreground">
-          Â© {new Date().getFullYear()} ByteStream. All rights reserved.
+          © {new Date().getFullYear()} ByteStore. All rights reserved.
         </div>
       </footer>
     </div>
