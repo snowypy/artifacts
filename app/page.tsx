@@ -10,23 +10,44 @@ import { Github, Package, Menu, Search, Loader2 } from 'lucide-react';
 import { useToast } from "@/hooks/use-toast";
 import { SearchResults } from "@/components/search-results";
 import debounce from 'lodash.debounce';
+import { Project } from '@/types/project';
 
 export default function HomePage() {
   const router = useRouter();
   const { toast } = useToast();
   const [searchQuery, setSearchQuery] = useState('');
   const [isLoading, setIsLoading] = useState(false);
-  const [searchResults, setSearchResults] = useState([]);
+  const [searchResults, setSearchResults] = useState<Project[]>([]);
+  const [popularProjects, setPopularProjects] = useState<Project[]>([]);
 
-  const popularArtifacts = [
-    { id: '1', name: 'spring-boot', author: 'spring-projects', downloads: '1M+' },
-    { id: '2', name: 'gson', author: 'google', downloads: '500K+' },
-    { id: '3', name: 'retrofit', author: 'square', downloads: '250K+' },
-    { id: '4', name: 'lombok', author: 'projectlombok', downloads: '200K+' },
-  ];
+  useEffect(() => {
+    fetchPopularProjects();
+  }, []);
+
+  const fetchPopularProjects = async () => {
+    try {
+      setIsLoading(true);
+      const response = await fetch(`http://localhost:8080/api/projects/top`);
+      if (!response.ok) {
+        throw new Error('Failed to fetch popular projects');
+      }
+      const data = await response.json();
+      setPopularProjects(data || []);
+      console.log(data)
+    } catch (error) {
+      console.error('Error fetching popular projects:', error);
+      toast({
+        title: 'Error',
+        description: 'Failed to load popular projects. Please try again later.',
+        variant: 'destructive',
+      });
+    } finally {
+      setIsLoading(false);
+    }
+  };
 
   const debouncedSearch = useCallback(
-      debounce(async (query) => {
+      debounce(async (query, projects: Project[]) => {
         if (query.trim() === '') {
           setSearchResults([]);
           return;
@@ -34,13 +55,11 @@ export default function HomePage() {
 
         setIsLoading(true);
         try {
-          // Simulate API call
           await new Promise(resolve => setTimeout(resolve, 500));
-          const filteredResults = popularArtifacts.filter(artifact =>
-              artifact.name.toLowerCase().includes(query.toLowerCase()) ||
-              artifact.author.toLowerCase().includes(query.toLowerCase())
+          const filteredResults = projects.filter(project =>
+              project.repoName.toLowerCase().includes(query.toLowerCase()) ||
+              project.username.toLowerCase().includes(query.toLowerCase())
           );
-          // @ts-ignore
           setSearchResults(filteredResults);
         } catch (error) {
           console.error(error);
@@ -56,8 +75,8 @@ export default function HomePage() {
   );
 
   useEffect(() => {
-    debouncedSearch(searchQuery);
-  }, [searchQuery, debouncedSearch]);
+    debouncedSearch(searchQuery, popularProjects);
+  }, [searchQuery, popularProjects, debouncedSearch]);
 
   const handleSearch = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -142,14 +161,14 @@ export default function HomePage() {
                 <SearchResults results={searchResults} isLoading={isLoading} />
             ) : (
                 <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
-                  {popularArtifacts.map((artifact) => (
-                      <Card key={artifact.id} className="bg-card border-border hover:border-primary transition-colors">
+                  {popularProjects.map((project) => (
+                      <Card key={project.id} className="bg-card border-border hover:border-primary transition-colors">
                         <CardHeader>
-                          <CardTitle className="text-lg text-primary">{artifact.name}</CardTitle>
+                          <CardTitle className="text-lg text-primary">{project.repoName}</CardTitle>
                         </CardHeader>
                         <CardContent>
-                          <p className="text-sm text-muted-foreground mb-2">by {artifact.author}</p>
-                          <p className="text-sm text-foreground">{artifact.downloads} downloads</p>
+                          <p className="text-sm text-muted-foreground mb-2">by {project.username}</p>
+                          <p className="text-sm text-foreground">{project.downloads} downloads</p>
                           <Button variant="outline" className="w-full mt-4 border-primary text-primary hover:bg-primary hover:text-primary-foreground">
                             <Github className="mr-2 h-4 w-4" />
                             View on GitHub
