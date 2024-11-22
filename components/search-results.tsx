@@ -27,7 +27,7 @@ export function SearchResults({ results, isLoading }: SearchResultsProps) {
                     <CardContent>
                         <p className="text-sm text-muted-foreground mb-2">by {result.username}</p>
                         <p className="text-sm text-foreground">{result.downloads} downloads</p>
-                        <Button variant="outline" className="w-full mt-4 border-primary text-primary hover:bg-primary hover:text-primary-foreground" onClick={window.open("https://github.com/" + result.username + "/" + result.repoName)}>
+                        <Button variant="outline" className="w-full mt-4 border-primary text-primary hover:bg-primary hover:text-primary-foreground">
                             <Github className="mr-2 h-4 w-4" />
                             View on GitHub
                         </Button>

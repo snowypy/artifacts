@@ -19,20 +19,6 @@ export default function LoginPage() {
 
   return (
     <div className="flex flex-col min-h-screen bg-background text-foreground">
-      <header className="border-b border-border/40">
-        <div className="container mx-auto px-4 py-4 flex justify-between items-center">
-          <Link href="/" className="text-2xl font-bold flex items-center text-foreground">
-            <Package className="mr-2" />
-            ByteStore
-          </Link>
-          <nav>
-            <ul className="flex space-x-4">
-              <li><Link href="/login" className="text-foreground hover:text-primary transition-colors">Login</Link></li>
-              <li><Link href="/account" className="text-foreground hover:text-primary transition-colors">Account</Link></li>
-            </ul>
-          </nav>
-        </div>
-      </header>
 
       <main className="flex-grow flex items-center justify-center bg-background">
         <Card className="w-full max-w-md bg-card">
@@ -79,12 +65,6 @@ export default function LoginPage() {
           </CardFooter>
         </Card>
       </main>
-
-      <footer className="border-t border-border/40">
-        <div className="container mx-auto px-4 py-6 text-center text-sm text-muted-foreground">
-            © {new Date().getFullYear()} ByteStore. All rights reserved.
-        </div>
-      </footer>
     </div>
   )
 }

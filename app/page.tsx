@@ -6,11 +6,12 @@ import { useRouter } from 'next/navigation';
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { Github, Package, Menu, Search, Loader2 } from 'lucide-react';
+import { Github, Search, Loader2 } from 'lucide-react';
 import { useToast } from "@/hooks/use-toast";
 import { SearchResults } from "@/components/search-results";
 import debounce from 'lodash.debounce';
 import { Project } from '@/types/project';
+import { motion } from 'framer-motion';
 
 export default function HomePage() {
   const router = useRouter();
@@ -33,7 +34,6 @@ export default function HomePage() {
       }
       const data = await response.json();
       setPopularProjects(data || []);
-      console.log(data)
     } catch (error) {
       console.error('Error fetching popular projects:', error);
       toast({
@@ -78,7 +78,7 @@ export default function HomePage() {
     debouncedSearch(searchQuery, popularProjects);
   }, [searchQuery, popularProjects, debouncedSearch]);
 
-  const handleSearch = async (e: React.FormEvent) => {
+  const handleSearch = (e: React.FormEvent) => {
     e.preventDefault();
 
     const trimmedQuery = searchQuery.trim();
@@ -90,38 +90,27 @@ export default function HomePage() {
       return;
     }
 
+    // Check if the query matches the username/repository schema
     const isValidFormat = /^[a-zA-Z0-9_-]+\/[a-zA-Z0-9_-]+$/.test(trimmedQuery);
 
     if (isValidFormat) {
+      // If it matches, navigate to the project page
       router.push(`/projects/${trimmedQuery}`);
     } else {
-      router.push(`/search?q=${encodeURIComponent(trimmedQuery)}`);
+      // If it doesn't match, use the existing search functionality
+      debouncedSearch(trimmedQuery, popularProjects);
     }
   };
 
   return (
-      <div className="flex flex-col min-h-screen bg-background text-foreground">
-        <header className="border-b border-border sticky top-0 z-10 bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60">
-          <div className="container mx-auto px-4 py-4 flex justify-between items-center">
-            <Link href="/" className="text-xl md:text-2xl font-bold flex items-center text-primary">
-              <Package className="mr-2 h-6 w-6 md:h-8 md:w-8" />
-              <span className="hidden sm:inline">ByteStore</span>
-            </Link>
-            <nav className="hidden md:block">
-              <ul className="flex space-x-4">
-                <li><Link href="/login" className="text-foreground hover:text-primary transition-colors">Login</Link></li>
-                <li><Link href="/account" className="text-foreground hover:text-primary transition-colors">Account</Link></li>
-              </ul>
-            </nav>
-            <Button variant="ghost" size="icon" className="md:hidden text-foreground hover:text-primary">
-              <Menu className="h-6 w-6" />
-              <span className="sr-only">Menu</span>
-            </Button>
-          </div>
-        </header>
-
+      <div>
         <main className="flex-grow container mx-auto px-4 py-8">
-          <section className="text-center mb-12">
+          <motion.section
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.5 }}
+              className="text-center mb-12"
+          >
             <h1 className="text-3xl md:text-4xl lg:text-5xl font-bold mb-4 text-primary">Welcome to ByteStore</h1>
             <p className="text-lg md:text-xl mb-8 text-muted-foreground max-w-2xl mx-auto">Build and serve Java artifacts from GitHub repositories with ease</p>
             <form onSubmit={handleSearch} className="flex flex-col sm:flex-row max-w-md mx-auto">
@@ -151,9 +140,14 @@ export default function HomePage() {
                 )}
               </Button>
             </form>
-          </section>
+          </motion.section>
 
-          <section aria-live="polite">
+          <motion.section
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.5, delay: 0.2 }}
+              aria-live="polite"
+          >
             <h2 className="text-2xl font-semibold mb-4 text-primary">
               {searchQuery ? 'Search Results' : 'Popular Artifacts'}
             </h2>
@@ -162,30 +156,27 @@ export default function HomePage() {
             ) : (
                 <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
                   {popularProjects.map((project) => (
-                      <Card key={project.id} className="bg-card border-border hover:border-primary transition-colors">
-                        <CardHeader>
-                          <CardTitle className="text-lg text-primary">{project.repoName}</CardTitle>
-                        </CardHeader>
-                        <CardContent>
-                          <p className="text-sm text-muted-foreground mb-2">by {project.username}</p>
-                          <p className="text-sm text-foreground">{project.downloads} downloads</p>
-                          <Button variant="outline" className="w-full mt-4 border-primary text-primary hover:bg-primary hover:text-primary-foreground">
-                            <Github className="mr-2 h-4 w-4" />
-                            View on GitHub
-                          </Button>
-                        </CardContent>
-                      </Card>
+                      <Link href={`/projects/${project.username}/${project.repoName}`} key={project.id}>
+                        <Card className="bg-card border-border hover:border-primary transition-colors cursor-pointer">
+                          <CardHeader>
+                            <CardTitle className="text-lg text-primary">{project.repoName}</CardTitle>
+                          </CardHeader>
+                          <CardContent>
+                            <p className="text-sm text-muted-foreground mb-2">by {project.username}</p>
+                            <p className="text-sm text-foreground">{project.downloads} downloads</p>
+                            <Button variant="outline" className="w-full mt-4 border-primary text-primary hover:bg-primary hover:text-primary-foreground">
+                              <Github className="mr-2 h-4 w-4" />
+                              View on GitHub
+                            </Button>
+                          </CardContent>
+                        </Card>
+                      </Link>
                   ))}
                 </div>
             )}
-          </section>
+          </motion.section>
         </main>
-
-        <footer className="border-t border-border mt-12">
-          <div className="container mx-auto px-4 py-6 text-center text-sm text-muted-foreground">
-            © {new Date().getFullYear()} ByteStore. All rights reserved.
-          </div>
-        </footer>
       </div>
   );
 }
+

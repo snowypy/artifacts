@@ -1,7 +1,6 @@
-import Link from 'next/link'
 import { Button } from "@/components/ui/button"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
-import { Package, Download, Star, GitFork, LogOut } from 'lucide-react'
+import { Download, Star, GitFork } from 'lucide-react'
 
 export default function AccountPage() {
   const user = {
@@ -23,20 +22,7 @@ export default function AccountPage() {
   ]
 
   return (
-    <div className="flex flex-col min-h-screen bg-background text-foreground">
-      <header className="border-b border-border/40">
-        <div className="container mx-auto px-4 py-4 flex justify-between items-center">
-          <Link href="/" className="text-2xl font-bold flex items-center text-foreground">
-            <Package className="mr-2" />
-            ByteStore
-          </Link>
-          <Button variant="ghost" className="flex items-center">
-            <LogOut className="mr-2 h-4 w-4" />
-            Sign Out
-          </Button>
-        </div>
-      </header>
-
+    <div>
       <main className="flex-grow container mx-auto px-4 py-8">
         <div className="flex flex-col md:flex-row justify-between items-start md:items-center mb-8">
           <div className="flex items-center mb-4 md:mb-0">
@@ -118,12 +104,6 @@ export default function AccountPage() {
           </div>
         </section>
       </main>
-
-      <footer className="border-t border-border mt-12">
-        <div className="container mx-auto px-4 py-6 text-center text-sm text-muted-foreground">
-          © {new Date().getFullYear()} ByteStore. All rights reserved.
-        </div>
-      </footer>
     </div>
   )
 }
