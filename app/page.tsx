@@ -46,6 +46,7 @@ export default function HomePage() {
     }
   };
 
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   const debouncedSearch = useCallback(
       debounce(async (query, projects: Project[]) => {
         if (query.trim() === '') {
@@ -103,7 +104,7 @@ export default function HomePage() {
   };
 
   return (
-      <div>
+      <div className="flex flex-col min-h-screen">
         <main className="flex-grow container mx-auto px-4 py-8">
           <motion.section
               initial={{ opacity: 0, y: 20 }}
@@ -179,4 +180,3 @@ export default function HomePage() {
       </div>
   );
 }
-

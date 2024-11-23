@@ -76,6 +76,7 @@ export default function ArtifactPage() {
     const [error, setError] = useState<string | null>(null);
     const [isModalOpen, setIsModalOpen] = useState<boolean>(false);
     const [selectedDependency, setSelectedDependency] = useState<{ version: string; isCommit: boolean } | null>(null);
+    const [activeTab, setActiveTab] = useState<string>('commits');
 
     useEffect(() => {
         const fetchArtifact = async () => {
@@ -166,9 +167,9 @@ export default function ArtifactPage() {
         <div className="min-h-screen bg-background">
             <main className="container mx-auto px-4 py-8">
                 <motion.div
-                    initial={{ opacity: 0, y: 20 }}
-                    animate={{ opacity: 1, y: 0 }}
-                    transition={{ duration: 0.5 }}
+                    initial={{opacity: 0, y: 20}}
+                    animate={{opacity: 1, y: 0}}
+                    transition={{duration: 0.5}}
                     className="mb-8"
                 >
                     <h1 className="text-4xl font-bold mb-2">{artifact.name}</h1>
@@ -179,7 +180,7 @@ export default function ArtifactPage() {
                             Latest: v{artifact.latestVersion}
                         </Badge>
                         <Button onClick={() => {
-                            setSelectedDependency({ version: artifact.latestVersion, isCommit: false });
+                            setSelectedDependency({version: artifact.latestVersion, isCommit: false});
                             setIsModalOpen(true);
                         }}>
                             <Package className="mr-2 h-4 w-4"/>
@@ -198,63 +199,34 @@ export default function ArtifactPage() {
                     </div>
                 </motion.div>
 
-                <section className="mb-12">
-                    <h2 className="text-xl font-semibold mb-4">Artifact Metrics</h2>
-                    <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-                        <Card className="bg-card">
-                            <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-                                <CardTitle className="text-sm font-medium">Total Downloads</CardTitle>
-                                <Download className="h-4 w-4 text-muted-foreground" />
-                            </CardHeader>
-                            <CardContent>
-                                <div className="text-2xl font-bold">{artifact.totalDownloads}</div>
-                            </CardContent>
-                        </Card>
-                        <Card className="bg-card">
-                            <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-                                <CardTitle className="text-sm font-medium">Total Stars</CardTitle>
-                                <Star className="h-4 w-4 text-muted-foreground" />
-                            </CardHeader>
-                            <CardContent>
-                                <div className="text-2xl font-bold">{artifact.totalStars}</div>
-                            </CardContent>
-                        </Card>
-                        <Card className="bg-card">
-                            <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-                                <CardTitle className="text-sm font-medium">Total Forks</CardTitle>
-                                <GitFork className="h-4 w-4 text-muted-foreground" />
-                            </CardHeader>
-                            <CardContent>
-                                <div className="text-2xl font-bold">{artifact.totalForks}</div>
-                            </CardContent>
-                        </Card>
+                <Tabs defaultValue="commits" className="mb-12" onValueChange={setActiveTab}>
+                    <div className="flex justify-between items-center mb-4">
+                        <h2 className="text-2xl font-semibold">{activeTab === 'commits' ? 'Recent Commits' : 'Releases'}</h2>
+                        <TabsList className="flex space-x-2">
+                            <TabsTrigger value="commits" className="px-4 py-2 rounded">Commits</TabsTrigger>
+                            <TabsTrigger value="releases" className="px-4 py-2 rounded">Releases</TabsTrigger>
+                        </TabsList>
                     </div>
-                </section>
-
-                <Tabs defaultValue="commits" className="mb-12">
-                    <TabsList className="mb-4">
-                        <TabsTrigger value="commits">Commits</TabsTrigger>
-                        <TabsTrigger value="releases">Releases</TabsTrigger>
-                    </TabsList>
                     <TabsContent value="commits">
-                        <h2 className="text-2xl font-semibold mb-4">Recent Commits</h2>
                         <div className="space-y-4">
                             {artifact.commits.map((commit, index) => (
                                 <motion.div
                                     key={commit.id}
-                                    initial={{ opacity: 0, y: 20 }}
-                                    animate={{ opacity: 1, y: 0 }}
-                                    transition={{ duration: 0.3, delay: index * 0.1 }}
+                                    initial={{opacity: 0, y: 20}}
+                                    animate={{opacity: 1, y: 0}}
+                                    transition={{duration: 0.3, delay: index * 0.1}}
                                 >
-                                    <Card className="overflow-hidden bg-card hover:shadow-md transition-shadow duration-300">
+                                    <Card
+                                        className="overflow-hidden bg-card hover:shadow-md transition-shadow duration-300">
                                         <div className={`h-2 ${getStatusColor(commit.buildStatus)}`}/>
                                         <CardHeader>
                                             <CardTitle className="flex justify-between items-center">
-                        <span className="flex items-center">
-                          <GitCommit className="mr-2 h-4 w-4"/>
-                            {commit.id.substring(0, 7)}
-                        </span>
-                                                <Badge variant={commit.buildStatus === 'success' ? 'default' : 'secondary'}>
+                                        <span className="flex items-center">
+                                            <GitCommit className="mr-2 h-4 w-4"/>
+                                            {commit.id.substring(0, 7)}
+                                        </span>
+                                                <Badge
+                                                    variant={commit.buildStatus === 'success' ? 'default' : 'secondary'}>
                                                     {getBuildStatusText(commit.buildStatus)}
                                                 </Badge>
                                             </CardTitle>
@@ -262,18 +234,19 @@ export default function ArtifactPage() {
                                         <CardContent>
                                             <p className="mb-2 font-medium">{commit.message}</p>
                                             <div className="flex flex-wrap gap-4 text-sm text-muted-foreground">
-                        <span className="flex items-center">
-                          <Clock className="mr-1 h-4 w-4"/>
-                            {commit.date}
-                        </span>
+                                        <span className="flex items-center">
+                                            <Clock className="mr-1 h-4 w-4"/>
+                                            {commit.date}
+                                        </span>
                                                 <span className="flex items-center">
-                          Author: {commit.author}
-                        </span>
+                                            Author: {commit.author}
+                                        </span>
                                             </div>
                                             <div className="mt-4 flex flex-wrap gap-2 justify-between">
                                                 <div className="flex flex-wrap gap-2">
                                                     <Button variant="outline" size="sm" asChild>
-                                                        <a href={`${artifact.githubUrl}/commit/${commit.id}`} target="_blank" rel="noopener noreferrer">
+                                                        <a href={`${artifact.githubUrl}/commit/${commit.id}`}
+                                                           target="_blank" rel="noopener noreferrer">
                                                             <GitBranch className="mr-2 h-4 w-4"/>
                                                             View on GitHub
                                                         </a>
@@ -288,7 +261,7 @@ export default function ArtifactPage() {
                                                         variant="outline"
                                                         size="sm"
                                                         onClick={() => {
-                                                            setSelectedDependency({ version: commit.id, isCommit: true });
+                                                            setSelectedDependency({version: commit.id, isCommit: true});
                                                             setIsModalOpen(true);
                                                         }}
                                                     >
@@ -297,7 +270,9 @@ export default function ArtifactPage() {
                                                     </Button>
                                                 </div>
                                                 {commit.buildStatus === 'not_built' && (
-                                                    <Button variant="default" size="sm" className="bg-blue-500 hover:bg-blue-600 text-white" onClick={() => handleBuild(commit.id)}>
+                                                    <Button variant="default" size="sm"
+                                                            className="bg-blue-500 hover:bg-blue-600 text-white"
+                                                            onClick={() => handleBuild(commit.id)}>
                                                         <FileText className="mr-2 h-4 w-4"/>
                                                         Request Build
                                                     </Button>
@@ -310,45 +285,49 @@ export default function ArtifactPage() {
                         </div>
                     </TabsContent>
                     <TabsContent value="releases">
-                        <h2 className="text-2xl font-semibold mb-4">Releases</h2>
                         <div className="space-y-4">
                             {artifact.versions.map((version, index) => (
                                 <motion.div
                                     key={version.version}
-                                    initial={{ opacity: 0, y: 20 }}
-                                    animate={{ opacity: 1, y: 0 }}
-                                    transition={{ duration: 0.3, delay: index * 0.1 }}
+                                    initial={{opacity: 0, y: 20}}
+                                    animate={{opacity: 1, y: 0}}
+                                    transition={{duration: 0.3, delay: index * 0.1}}
                                 >
-                                    <Card className="overflow-hidden bg-card hover:shadow-md transition-shadow duration-300">
+                                    <Card
+                                        className="overflow-hidden bg-card hover:shadow-md transition-shadow duration-300">
                                         <div className={`h-2 ${getStatusColor(version.status)}`}/>
                                         <CardHeader>
                                             <CardTitle className="flex justify-between items-center">
-                        <span className="flex items-center">
-                          <Tag className="mr-2 h-4 w-4"/>
-                          v{version.version}
-                        </span>
-                                                <Badge variant={version.status === 'success' ? 'default' : 'destructive'}>
+                                        <span className="flex items-center">
+                                            <Tag className="mr-2 h-4 w-4"/>
+                                            v{version.version}
+                                        </span>
+                                                <Badge
+                                                    variant={version.status === 'success' ? 'default' : 'destructive'}>
                                                     {version.status}
                                                 </Badge>
                                             </CardTitle>
                                         </CardHeader>
                                         <CardContent>
                                             <div className="flex flex-wrap gap-4 text-sm text-muted-foreground">
-                        <span className="flex items-center">
-                          <Clock className="mr-1 h-4 w-4"/>
-                            {version.date}
-                        </span>
+                                        <span className="flex items-center">
+                                            <Clock className="mr-1 h-4 w-4"/>
+                                            {version.date}
+                                        </span>
                                                 <span className="flex items-center">
-                          <Download className="mr-1 h-4 w-4"/>
+                                            <Download className="mr-1 h-4 w-4"/>
                                                     {version.downloads.toLocaleString()} downloads
-                        </span>
+                                        </span>
                                             </div>
                                             <div className="mt-4 flex flex-wrap gap-2">
                                                 <Button
                                                     variant="outline"
                                                     size="sm"
                                                     onClick={() => {
-                                                        setSelectedDependency({ version: version.version, isCommit: false });
+                                                        setSelectedDependency({
+                                                            version: version.version,
+                                                            isCommit: false
+                                                        });
                                                         setIsModalOpen(true);
                                                     }}
                                                 >
@@ -356,7 +335,8 @@ export default function ArtifactPage() {
                                                     Copy Dependency
                                                 </Button>
                                                 <Button variant="outline" size="sm" asChild>
-                                                    <a href={`${artifact.githubUrl}/releases/tag/v${version.version}`} target="_blank" rel="noopener noreferrer">
+                                                    <a href={`${artifact.githubUrl}/releases/tag/v${version.version}`}
+                                                       target="_blank" rel="noopener noreferrer">
                                                         <GitBranch className="mr-2 h-4 w-4"/>
                                                         View on GitHub
                                                     </a>
