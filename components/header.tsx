@@ -1,9 +1,14 @@
+'use client'
+
 import * as React from "react";
 import Link from "next/link";
 import { Menu, Package } from "lucide-react";
 import { Button } from "@/components/ui/button";
+import {useAuth} from "@/context/auth-context";
 
 export function Header() {
+    const { user } = useAuth()
+
     return (
         <header className="border-b border-border sticky top-0 z-10 bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60">
             <div className="container mx-auto px-4 py-4 flex justify-between items-center">
@@ -13,16 +18,19 @@ export function Header() {
                 </Link>
                 <nav className="hidden md:block">
                     <ul className="flex space-x-4">
-                        <li>
-                            <Link href="/login" className="text-foreground hover:text-primary transition-colors">
-                                Login
-                            </Link>
-                        </li>
-                        <li>
-                            <Link href="/account" className="text-foreground hover:text-primary transition-colors">
-                                Account
-                            </Link>
-                        </li>
+                        {user == null ?
+                            <li>
+                                <Link href="/login" className="text-foreground hover:text-primary transition-colors">
+                                    Login
+                                </Link>
+                            </li>
+                                :
+                            <li>
+                                <Link href="/account" className="text-foreground hover:text-primary transition-colors">
+                                    Account
+                                </Link>
+                            </li>
+                        }
                     </ul>
                 </nav>
                 <Button variant="ghost" size="icon" className="md:hidden text-foreground hover:text-primary">
