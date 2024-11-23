@@ -46,6 +46,7 @@ export default function HomePage() {
     }
   };
 
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   const debouncedSearch = useCallback(
       debounce(async (query, projects: Project[]) => {
         if (query.trim() === '') {
