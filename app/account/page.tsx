@@ -1,14 +1,12 @@
+'use client';
+
 import { Button } from "@/components/ui/button"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
-import { Download, Star, GitFork } from 'lucide-react'
+import {Download, Star, GitFork, LogOut} from 'lucide-react'
+import {ProtectedRoute} from "@/components/protected-route";
+import {useAuth} from "@/context/auth-context";
 
-export default function AccountPage() {
-  const user = {
-    name: 'John Doe',
-    username: 'johndoe',
-    avatarUrl: 'https://avatars.githubusercontent.com/u/133208096?v=4',
-  }
-
+function AccountPage() {
   const metrics = {
     totalDownloads: '1.2M',
     totalStars: '5.6K',
@@ -21,6 +19,10 @@ export default function AccountPage() {
     { id: 3, name: 'spring-boot-starter', downloads: '400K', stars: '1.5K', forks: '280' },
   ]
 
+  // we can use the user id later here to do stuff
+  const { user, logout } = useAuth();
+  if (!user) return null;
+
   return (
     <div>
       <main className="flex-grow container mx-auto px-4 py-8">
@@ -28,15 +30,18 @@ export default function AccountPage() {
           <div className="flex items-center mb-4 md:mb-0">
             <img
               src={user.avatarUrl}
-              alt={`${user.name}'s avatar`}
+              alt={`${user.display}'s avatar`}
               className="w-16 h-16 rounded-full mr-4"
             />
             <div>
-              <h1 className="text-2xl font-bold">{user.name}</h1>
+              <h1 className="text-2xl font-bold">{user.display}</h1>
               <p className="text-muted-foreground">@{user.username}</p>
             </div>
           </div>
-          <Button>Edit Profile</Button>
+          <Button onClick={logout} variant="outline" className="text-red-600 hover:text-red-700 hover:bg-red-50 border-red-200 hover:border-red-300 transition-colors duration-200">
+            <LogOut className="w-4 h-4 mr-2" />
+            Logout
+          </Button>
         </div>
 
         <section className="mb-12">
@@ -106,4 +111,12 @@ export default function AccountPage() {
       </main>
     </div>
   )
+}
+
+export default function ProtectedAccountPage() {
+  return (
+      <ProtectedRoute>
+        <AccountPage />
+      </ProtectedRoute>
+  );
 }
