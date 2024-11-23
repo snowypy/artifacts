@@ -1,70 +1,108 @@
-'use client'
-
-import { useState } from 'react'
-import Link from 'next/link'
+import { redirect } from "next/navigation"
+import DonateNodeForm from "./donate-node-form"
 import { Button } from "@/components/ui/button"
-import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card"
-import { Github } from 'lucide-react'
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
+import { CheckCircle, Cpu, HardDrive, Zap } from 'lucide-react'
 
-export default function LoginPage() {
-    const [isLoading, setIsLoading] = useState(false)
-
-    const handleGitHubLogin = async () => {
-        setIsLoading(true)
-        // TODO: Implement GitHub OAuth login
-        console.log('GitHub login initiated')
-        await new Promise(resolve => setTimeout(resolve, 2000))
-        setIsLoading(false)
-    }
+export default async function DonateNodePage() {
 
     return (
-        <div className="flex flex-col min-h-screen bg-background text-foreground">
+        <div className="container mx-auto px-4 py-8">
+            <h1 className="text-4xl font-bold mb-6">Donate a Node</h1>
 
-            <main className="flex-grow flex items-center justify-center bg-background">
-                <Card className="w-full max-w-md bg-card">
-                    <CardHeader className="space-y-1">
-                        <CardTitle className="text-2xl text-center">Sign in to ByteStore</CardTitle>
-                        <CardDescription className="text-center">
-                            Use your GitHub account to access ByteStore
-                        </CardDescription>
-                    </CardHeader>
-                    <CardContent className="flex justify-center">
-                        <Button
-                            variant="outline"
-                            onClick={handleGitHubLogin}
-                            disabled={isLoading}
-                            className="w-full bg-primary hover:bg-primary/90 text-primary-foreground"
-                        >
-                            {isLoading ? (
-                                <span className="flex items-center justify-center">
-                  <svg className="animate-spin -ml-1 mr-3 h-5 w-5 text-foreground" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
-                    <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
-                    <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
-                  </svg>
-                  Signing in...
-                </span>
-                            ) : (
-                                <>
-                                    <Github className="mr-2 h-4 w-4" />
-                                    Sign in with GitHub
-                                </>
-                            )}
-                        </Button>
-                    </CardContent>
-                    <CardFooter className="flex justify-center">
-                        <p className="text-sm text-muted-foreground">
-                            By signing in, you agree to our{' '}
-                            <Link href="/terms" className="underline hover:text-primary">
-                                Terms of Service
-                            </Link>{' '}
-                            and{' '}
-                            <Link href="/privacy" className="underline hover:text-primary">
-                                Privacy Policy
-                            </Link>
-                        </p>
-                    </CardFooter>
-                </Card>
-            </main>
+            <section className="mb-12">
+                <h2 className="text-3xl font-semibold mb-4">What are Nodes?</h2>
+                <p className="text-lg text-gray-700 mb-4">
+                    Nodes are the backbone of the Jitpack++ ecosystem. They are processes running on individual computers
+                    that contribute to building open-source Java projects. By donating a node, you&#39;re offering your computer&#39;s
+                    resources to help compile and build artifacts for various GitHub repositories.
+                </p>
+                <p className="text-lg text-gray-700 mb-4">
+                    Each node acts as a worker in our distributed build network, pulling tasks from a queue and executing
+                    them. This distributed approach allows us to parallelize builds across many machines, significantly
+                    speeding up the overall build process for the entire community.
+                </p>
+            </section>
+
+            <section className="mb-12">
+                <h2 className="text-3xl font-semibold mb-4">Why Donate a Node?</h2>
+                <div className="grid md:grid-cols-2 gap-6">
+                    <Card>
+                        <CardHeader>
+                            <CardTitle className="flex items-center">
+                                <Zap className="mr-2" />
+                                Accelerate Open Source
+                            </CardTitle>
+                        </CardHeader>
+                        <CardContent>
+                            <p>Help speed up build times for countless open-source projects, contributing to faster development cycles.</p>
+                        </CardContent>
+                    </Card>
+                    <Card>
+                        <CardHeader>
+                            <CardTitle className="flex items-center">
+                                <Cpu className="mr-2" />
+                                Utilize Idle Resources
+                            </CardTitle>
+                        </CardHeader>
+                        <CardContent>
+                            <p>Put your computer&#39;s idle time to good use by contributing to the open-source community.</p>
+                        </CardContent>
+                    </Card>
+                    <Card>
+                        <CardHeader>
+                            <CardTitle className="flex items-center">
+                                <HardDrive className="mr-2" />
+                                Distributed Resilience
+                            </CardTitle>
+                        </CardHeader>
+                        <CardContent>
+                            <p>Help create a more resilient build network that doesn&#39;t rely on centralized infrastructure.</p>
+                        </CardContent>
+                    </Card>
+                    <Card>
+                        <CardHeader>
+                            <CardTitle className="flex items-center">
+                                <CheckCircle className="mr-2" />
+                                Community Recognition
+                            </CardTitle>
+                        </CardHeader>
+                        <CardContent>
+                            <p>Get recognized for your contributions to the Jitpack++ community and open-source ecosystem.</p>
+                        </CardContent>
+                    </Card>
+                </div>
+            </section>
+
+            <section className="mb-12">
+                <h2 className="text-3xl font-semibold mb-4">How Easy is it to Set Up?</h2>
+                <p className="text-lg text-gray-700 mb-4">
+                    Setting up a node is incredibly simple. We&#39;ve designed the process to be as straightforward as possible:
+                </p>
+                <ol className="list-decimal list-inside space-y-2 text-lg text-gray-700 mb-4">
+                    <li>Download our node client application</li>
+                    <li>Run the installer, which will set up all necessary dependencies</li>
+                    <li>Log in with your Jitpack++ account</li>
+                    <li>Choose your resource allocation and availability preferences</li>
+                    <li>Start the node and you&#39;re done!</li>
+                </ol>
+                <p className="text-lg text-gray-700 mb-4">
+                    Our node client runs in the background, using only the resources you&#39;ve allocated and respecting your
+                    availability preferences. You can easily monitor your node&#39;s activity and contribution through your
+                    Jitpack++ dashboard.
+                </p>
+                <Button variant="secondary" className="mt-4">Learn More About Node Setup</Button>
+            </section>
+
+            <section>
+                <h2 className="text-3xl font-semibold mb-4">Ready to Contribute?</h2>
+                <p className="text-lg text-gray-700 mb-4">
+                    Fill out the form below to register your node. Once submitted, we&#39;ll provide you with instructions
+                    to download and set up the node client on your machine.
+                </p>
+                <DonateNodeForm />
+            </section>
         </div>
     )
 }
+
