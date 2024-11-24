@@ -8,70 +8,31 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Skeleton } from "@/components/ui/skeleton";
-import {Package, Download, GitBranch, Clock, FileText, GitCommit, Tag, Star, GitFork} from 'lucide-react';
+import {Package, Download, GitBranch, Clock, FileText, GitCommit } from 'lucide-react';
 import { DependencyModal } from '@/components/dependency-modal';
 import { motion } from "framer-motion";
-
-interface Version {
-    version: string;
-    status: 'success' | 'failed' | 'pending';
-    date: string;
-    downloads: number;
-}
+import {Project} from "@/types/project";
 
 interface Commit {
-    id: string;
-    message: string;
+    commitHash: string;
+    commitMessage: string;
     author: string;
     date: string;
-    buildStatus: 'not_built' | 'failed' | 'success' | 'concurrent';
+    buildInfo: BuildInfo;
 }
 
-interface Artifact {
+interface BuildInfo {
     id: string;
-    name: string;
-    group: string;
-    latestVersion: string;
-    description: string;
-    versions: Version[];
-    commits: Commit[];
-    githubUrl: string;
-    totalDownloads: string;
-    totalStars: string;
-    totalForks: string;
+    projectId: string;
+    builtAt: string;
+    location: 'LOCAL' | 'S3' | 'DISCORD';
+    status: 'SUCCESS' | 'FAILED' | 'IN_PROGRESS';
 }
-
-const getArtifact = async (id: string, project: string): Promise<Artifact> => {
-    await new Promise(resolve => setTimeout(resolve, 1000));
-
-    return {
-        id,
-        name: project,
-        group: 'com.example',
-        latestVersion: '1.2.3',
-        description: 'A powerful Java library for awesome things, now with even more awesomeness!',
-        githubUrl: 'https://github.com/example/project',
-        totalDownloads: '1.2M',
-        totalStars: '5.6K',
-        totalForks: '1.8K',
-        versions: [
-            { version: '1.2.3', status: 'success', date: '2023-05-15', downloads: 5000 },
-            { version: '1.2.2', status: 'success', date: '2023-04-01', downloads: 12000 },
-            { version: '1.2.1', status: 'failed', date: '2023-03-15', downloads: 8000 },
-            { version: '1.2.0', status: 'success', date: '2023-02-28', downloads: 15000 },
-        ],
-        commits: [
-            { id: 'abc123', message: 'Fix critical bug in authentication flow', author: 'Alice', date: '2023-05-20', buildStatus: 'success' },
-            { id: 'def456', message: 'Add new feature: Dark mode support', author: 'Bob', date: '2023-05-19', buildStatus: 'failed' },
-            { id: 'ghi789', message: 'Update dependencies to latest versions', author: 'Charlie', date: '2023-05-18', buildStatus: 'not_built' },
-            { id: 'jkl012', message: 'Refactor code for better performance', author: 'David', date: '2023-05-17', buildStatus: 'concurrent' },
-        ],
-    };
-};
 
 export default function ArtifactPage() {
     const { username, project } = useParams<{ username: string; project: string }>();
-    const [artifact, setArtifact] = useState<Artifact | null>(null);
+    const [ projectData, setProjectData ] = useState<Project | null>(null);
+    const [ commits, setCommits ] = useState<Commit[]>([]);
     const [loading, setLoading] = useState<boolean>(true);
     const [error, setError] = useState<string | null>(null);
     const [isModalOpen, setIsModalOpen] = useState<boolean>(false);
@@ -81,43 +42,83 @@ export default function ArtifactPage() {
     useEffect(() => {
         const fetchArtifact = async () => {
             try {
-                const fetchedArtifact = await getArtifact(username, project);
-                setArtifact(fetchedArtifact);
+                const res = await fetch("http://localhost:8080/api/projects/" + username + "/" + project);
+                if (!res.ok) {
+                    console.log("Failed to fetch project information")
+                    return {
+                        redirect: {
+                            destination: '/404',
+                            permanent: false,
+                        },
+                    };
+                }
+
+                setProjectData(await res.json());
             } catch (err) {
                 console.error(err);
-                setError('Failed to load artifact data. Please try again later.');
+                setError('Failed to load project data. Please try again later.');
+                return {
+                    redirect: {
+                        destination: '/404',
+                        permanent: false,
+                    },
+                };
             } finally {
                 setLoading(false);
             }
         };
 
+        const fetchCommits = async () => {
+            try {
+                const res = await fetch("http://localhost:8080/api/projects/" + username + "/" + project + "/commits");
+                if (!res.ok) {
+                    console.log("Failed to fetch commit information")
+                    return {
+                        redirect: {
+                            destination: '/404',
+                            permanent: false,
+                        },
+                    };
+                }
+
+                setCommits(await res.json());
+            } catch (err) {
+                console.error(err);
+                setError('Failed to load commit data. Please try again later.');
+
+            } finally {
+                setLoading(false);
+            }
+        }
+
         fetchArtifact();
+        fetchCommits()
     }, [username, project]);
 
-    const getStatusColor = (status: 'success' | 'failed' | 'pending' | 'not_built' | 'concurrent'): string => {
+    const getStatusColor = (status: 'SUCCESS' | 'FAILED' | 'IN_PROGRESS' | 'NOT_BUILT'): string => {
         switch (status) {
-            case 'success':
+            case 'SUCCESS':
                 return 'bg-green-500';
-            case 'failed':
+            case 'FAILED':
                 return 'bg-red-500';
-            case 'concurrent':
+            case 'IN_PROGRESS':
                 return 'bg-blue-500';
-            case 'not_built':
+            case 'NOT_BUILT':
                 return 'bg-gray-500';
             default:
                 return 'bg-yellow-500';
         }
     };
 
-    const getBuildStatusText = (status: 'not_built' | 'failed' | 'success' | 'concurrent'): string => {
+    const getBuildStatusText = (status: 'SUCCESS' | 'FAILED' | 'IN_PROGRESS' | 'NOT_BUILT'): string => {
         switch (status) {
-            case 'not_built':
+            case 'NOT_BUILT':
                 return 'Not Built';
-            case 'failed':
+            case 'FAILED':
                 return 'Build Failed';
-            case 'success':
+            case 'SUCCESS':
                 return 'Build Successful';
-            case 'concurrent':
+            case 'IN_PROGRESS':
                 return 'Building...';
         }
     };
@@ -151,7 +152,7 @@ export default function ArtifactPage() {
         );
     }
 
-    if (!artifact) {
+    if (!projectData) {
         return (
             <div className="container mx-auto px-4 py-8 text-center">
                 <h1 className="text-2xl font-bold mb-4">Artifact not found</h1>
@@ -172,15 +173,15 @@ export default function ArtifactPage() {
                     transition={{duration: 0.5}}
                     className="mb-8"
                 >
-                    <h1 className="text-4xl font-bold mb-2">{artifact.name}</h1>
-                    <p className="text-xl text-muted-foreground mb-4">{artifact.group}</p>
-                    <p className="text-lg mb-4">{artifact.description}</p>
+                    <h1 className="text-4xl font-bold mb-2">{projectData.repoName}</h1>
+                    <p className="text-xl text-muted-foreground mb-4">com.github.{projectData.username.toLowerCase()}</p>
+                    <p className="text-lg mb-4">This is an example description because we are too lazy to implement description rn.</p>
                     <div className="flex flex-wrap gap-4">
                         <Badge variant="secondary" className="text-lg py-1 px-3">
-                            Latest: v{artifact.latestVersion}
+                            Latest: v1.0
                         </Badge>
                         <Button onClick={() => {
-                            setSelectedDependency({version: artifact.latestVersion, isCommit: false});
+                            setSelectedDependency({version: "1.0", isCommit: false});
                             setIsModalOpen(true);
                         }}>
                             <Package className="mr-2 h-4 w-4"/>
@@ -191,7 +192,7 @@ export default function ArtifactPage() {
                             Download Latest
                         </Button>
                         <Button variant="outline" asChild>
-                            <a href={artifact.githubUrl} target="_blank" rel="noopener noreferrer">
+                            <a href={`https://github.com/${username}/${project}`} target="_blank" rel="noopener noreferrer">
                                 <GitBranch className="mr-2 h-4 w-4"/>
                                 View on GitHub
                             </a>
@@ -209,30 +210,30 @@ export default function ArtifactPage() {
                     </div>
                     <TabsContent value="commits">
                         <div className="space-y-4">
-                            {artifact.commits.map((commit, index) => (
+                            {commits.map((commit, index) => (
                                 <motion.div
-                                    key={commit.id}
+                                    key={commit.commitHash}
                                     initial={{opacity: 0, y: 20}}
                                     animate={{opacity: 1, y: 0}}
                                     transition={{duration: 0.3, delay: index * 0.1}}
                                 >
                                     <Card
                                         className="overflow-hidden bg-card hover:shadow-md transition-shadow duration-300">
-                                        <div className={`h-2 ${getStatusColor(commit.buildStatus)}`}/>
+                                        <div className={`h-2 ${getStatusColor(commit.buildInfo != null ? commit.buildInfo.status : "NOT_BUILT")}`}/>
                                         <CardHeader>
                                             <CardTitle className="flex justify-between items-center">
                                         <span className="flex items-center">
                                             <GitCommit className="mr-2 h-4 w-4"/>
-                                            {commit.id.substring(0, 7)}
+                                            {commit.commitHash.substring(0, 7)}
                                         </span>
                                                 <Badge
-                                                    variant={commit.buildStatus === 'success' ? 'default' : 'secondary'}>
-                                                    {getBuildStatusText(commit.buildStatus)}
+                                                    variant={commit.buildInfo != null && commit.buildInfo.status === 'SUCCESS' ? 'default' : 'secondary'}>
+                                                    {getBuildStatusText(commit.buildInfo != null ? commit.buildInfo.status : "NOT_BUILT")}
                                                 </Badge>
                                             </CardTitle>
                                         </CardHeader>
                                         <CardContent>
-                                            <p className="mb-2 font-medium">{commit.message}</p>
+                                            <p className="mb-2 font-medium">{commit.commitMessage}</p>
                                             <div className="flex flex-wrap gap-4 text-sm text-muted-foreground">
                                         <span className="flex items-center">
                                             <Clock className="mr-1 h-4 w-4"/>
@@ -245,23 +246,23 @@ export default function ArtifactPage() {
                                             <div className="mt-4 flex flex-wrap gap-2 justify-between">
                                                 <div className="flex flex-wrap gap-2">
                                                     <Button variant="outline" size="sm" asChild>
-                                                        <a href={`${artifact.githubUrl}/commit/${commit.id}`}
+                                                        <a href={`https://github.com/${username}/${project}/commit/${commit.commitHash}`}
                                                            target="_blank" rel="noopener noreferrer">
                                                             <GitBranch className="mr-2 h-4 w-4"/>
                                                             View on GitHub
                                                         </a>
                                                     </Button>
-                                                    {commit.buildStatus !== 'not_built' && (
+                                                    {commit.buildInfo != null && (
                                                         <Button variant="outline" size="sm">
                                                             <FileText className="mr-2 h-4 w-4"/>
-                                                            {commit.buildStatus === 'concurrent' ? 'View Build Progress' : 'Build Logs'}
+                                                            {commit.buildInfo.status === 'IN_PROGRESS' ? 'View Build Progress' : 'Build Logs'}
                                                         </Button>
                                                     )}
                                                     <Button
                                                         variant="outline"
                                                         size="sm"
                                                         onClick={() => {
-                                                            setSelectedDependency({version: commit.id, isCommit: true});
+                                                            setSelectedDependency({version: commit.commitHash, isCommit: true});
                                                             setIsModalOpen(true);
                                                         }}
                                                     >
@@ -269,10 +270,10 @@ export default function ArtifactPage() {
                                                         Copy Dependency
                                                     </Button>
                                                 </div>
-                                                {commit.buildStatus === 'not_built' && (
+                                                {commit.buildInfo == null && (
                                                     <Button variant="default" size="sm"
                                                             className="bg-blue-500 hover:bg-blue-600 text-white"
-                                                            onClick={() => handleBuild(commit.id)}>
+                                                            onClick={() => handleBuild(commit.commitHash)}>
                                                         <FileText className="mr-2 h-4 w-4"/>
                                                         Request Build
                                                     </Button>
@@ -285,88 +286,18 @@ export default function ArtifactPage() {
                         </div>
                     </TabsContent>
                     <TabsContent value="releases">
-                        <div className="space-y-4">
-                            {artifact.versions.map((version, index) => (
-                                <motion.div
-                                    key={version.version}
-                                    initial={{opacity: 0, y: 20}}
-                                    animate={{opacity: 1, y: 0}}
-                                    transition={{duration: 0.3, delay: index * 0.1}}
-                                >
-                                    <Card
-                                        className="overflow-hidden bg-card hover:shadow-md transition-shadow duration-300">
-                                        <div className={`h-2 ${getStatusColor(version.status)}`}/>
-                                        <CardHeader>
-                                            <CardTitle className="flex justify-between items-center">
-                                        <span className="flex items-center">
-                                            <Tag className="mr-2 h-4 w-4"/>
-                                            v{version.version}
-                                        </span>
-                                                <Badge
-                                                    variant={version.status === 'success' ? 'default' : 'destructive'}>
-                                                    {version.status}
-                                                </Badge>
-                                            </CardTitle>
-                                        </CardHeader>
-                                        <CardContent>
-                                            <div className="flex flex-wrap gap-4 text-sm text-muted-foreground">
-                                        <span className="flex items-center">
-                                            <Clock className="mr-1 h-4 w-4"/>
-                                            {version.date}
-                                        </span>
-                                                <span className="flex items-center">
-                                            <Download className="mr-1 h-4 w-4"/>
-                                                    {version.downloads.toLocaleString()} downloads
-                                        </span>
-                                            </div>
-                                            <div className="mt-4 flex flex-wrap gap-2">
-                                                <Button
-                                                    variant="outline"
-                                                    size="sm"
-                                                    onClick={() => {
-                                                        setSelectedDependency({
-                                                            version: version.version,
-                                                            isCommit: false
-                                                        });
-                                                        setIsModalOpen(true);
-                                                    }}
-                                                >
-                                                    <Package className="mr-2 h-4 w-4"/>
-                                                    Copy Dependency
-                                                </Button>
-                                                <Button variant="outline" size="sm" asChild>
-                                                    <a href={`${artifact.githubUrl}/releases/tag/v${version.version}`}
-                                                       target="_blank" rel="noopener noreferrer">
-                                                        <GitBranch className="mr-2 h-4 w-4"/>
-                                                        View on GitHub
-                                                    </a>
-                                                </Button>
-                                                <Button variant="outline" size="sm">
-                                                    <FileText className="mr-2 h-4 w-4"/>
-                                                    Release Notes
-                                                </Button>
-                                                <Button variant="outline" size="sm">
-                                                    <Download className="mr-2 h-4 w-4"/>
-                                                    Download
-                                                </Button>
-                                            </div>
-                                        </CardContent>
-                                    </Card>
-                                </motion.div>
-                            ))}
-                        </div>
                     </TabsContent>
                 </Tabs>
             </main>
 
-            {artifact && selectedDependency && (
+            {project && selectedDependency && (
                 <DependencyModal
                     isOpen={isModalOpen}
                     onClose={() => {
                         setIsModalOpen(false);
                         setSelectedDependency(null);
                     }}
-                    artifact={artifact}
+                    project={projectData}
                     version={selectedDependency.version}
                     isCommit={selectedDependency.isCommit}
                 />
