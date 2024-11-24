@@ -3,28 +3,26 @@ import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription } f
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Button } from "@/components/ui/button";
 import { Copy, Check } from 'lucide-react';
+import {Project} from "@/types/project";
 
 interface DependencyModalProps {
     isOpen: boolean;
     onClose: () => void;
-    artifact: {
-        group: string;
-        name: string;
-    };
+    project: Project,
     version: string;
     isCommit: boolean;
 }
 
-export function DependencyModal({ isOpen, onClose, artifact, version, isCommit }: DependencyModalProps) {
+export function DependencyModal({ isOpen, onClose, project, version, isCommit }: DependencyModalProps) {
     const [copiedTab, setCopiedTab] = useState<string | null>(null);
 
     const mavenDependency = `<dependency>
-  <groupId>${artifact.group}</groupId>
-  <artifactId>${artifact.name}</artifactId>
+  <groupId>com.github.${project.username.toLowerCase()}</groupId>
+  <artifactId>${project.repoName}</artifactId>
   <version>${isCommit ? version + '-SNAPSHOT' : version}</version>
 </dependency>`;
 
-    const gradleDependency = `implementation '${artifact.group}:${artifact.name}:${isCommit ? version + '-SNAPSHOT' : version}'`;
+    const gradleDependency = `implementation 'com.github.${project.username.toLowerCase()}:${project.repoName}:${isCommit ? version + '-SNAPSHOT' : version}'`;
 
     const copyToClipboard = (text: string, tab: string) => {
         navigator.clipboard.writeText(text);
