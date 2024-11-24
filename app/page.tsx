@@ -20,6 +20,8 @@ export default function HomePage() {
   const [isLoading, setIsLoading] = useState(false);
   const [searchResults, setSearchResults] = useState<Project[]>([]);
   const [popularProjects, setPopularProjects] = useState<Project[]>([]);
+  const [currentPage, setCurrentPage] = useState(1);
+  const resultsPerPage = 10;
 
   useEffect(() => {
     fetchPopularProjects();
@@ -46,9 +48,8 @@ export default function HomePage() {
     }
   };
 
-  // eslint-disable-next-line react-hooks/exhaustive-deps
   const debouncedSearch = useCallback(
-      debounce(async (query, projects: Project[]) => {
+      debounce(async (query, projects: Project[], page: number) => {
         if (query.trim() === '') {
           setSearchResults([]);
           return;
@@ -61,7 +62,8 @@ export default function HomePage() {
               project.repoName.toLowerCase().includes(query.toLowerCase()) ||
               project.username.toLowerCase().includes(query.toLowerCase())
           );
-          setSearchResults(filteredResults);
+          const paginatedResults = filteredResults.slice((page - 1) * resultsPerPage, page * resultsPerPage);
+          setSearchResults(paginatedResults);
         } catch (error) {
           console.error(error);
           toast({
@@ -76,8 +78,8 @@ export default function HomePage() {
   );
 
   useEffect(() => {
-    debouncedSearch(searchQuery, popularProjects);
-  }, [searchQuery, popularProjects, debouncedSearch]);
+    debouncedSearch(searchQuery, popularProjects, currentPage);
+  }, [searchQuery, popularProjects, currentPage, debouncedSearch]);
 
   const handleSearch = (e: React.FormEvent) => {
     e.preventDefault();
@@ -91,16 +93,19 @@ export default function HomePage() {
       return;
     }
 
-    // Check if the query matches the username/repository schema
     const isValidFormat = /^[a-zA-Z0-9_-]+\/[a-zA-Z0-9_-]+$/.test(trimmedQuery);
 
     if (isValidFormat) {
-      // If it matches, navigate to the project page
       router.push(`/projects/${trimmedQuery}`);
     } else {
-      // If it doesn't match, use the existing search functionality
-      debouncedSearch(trimmedQuery, popularProjects);
+      setCurrentPage(1);
+      debouncedSearch(trimmedQuery, popularProjects, 1);
     }
+  };
+
+  const handlePageChange = (newPage: number) => {
+    setCurrentPage(newPage);
+    debouncedSearch(searchQuery, popularProjects, newPage);
   };
 
   return (
@@ -152,12 +157,33 @@ export default function HomePage() {
             <h2 className="text-2xl font-semibold mb-4 text-primary">
               {searchQuery ? 'Search Results' : 'Popular Artifacts'}
             </h2>
-            {searchQuery ? (
-                <SearchResults results={searchResults} isLoading={isLoading} />
+            {isLoading ? (
+                <div className="flex justify-center items-center">
+                  <Loader2 className="h-8 w-8 animate-spin" />
+                </div>
+            ) : searchQuery ? (
+                <>
+                  <SearchResults results={searchResults} isLoading={isLoading} />
+                  <div className="flex justify-center mt-4">
+                    <Button
+                        onClick={() => handlePageChange(currentPage - 1)}
+                        disabled={currentPage === 1}
+                        className="mr-2"
+                    >
+                      Previous
+                    </Button>
+                    <Button
+                        onClick={() => handlePageChange(currentPage + 1)}
+                        disabled={searchResults.length < resultsPerPage}
+                    >
+                      Next
+                    </Button>
+                  </div>
+                </>
             ) : (
                 <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
                   {popularProjects.map((project) => (
-                      <Link href={`/projects/${project.username}/${project.repoName}`} key={project.id}>
+                      <Link href={`https://github.com/${project.username}/${project.repoName}`} key={project.id} target="_blank" rel="noopener noreferrer">
                         <Card className="bg-card border-border hover:border-primary transition-colors cursor-pointer">
                           <CardHeader>
                             <CardTitle className="text-lg text-primary">{project.repoName}</CardTitle>
@@ -165,7 +191,14 @@ export default function HomePage() {
                           <CardContent>
                             <p className="text-sm text-muted-foreground mb-2">by {project.username}</p>
                             <p className="text-sm text-foreground">{project.downloads} downloads</p>
-                            <Button variant="outline" className="w-full mt-4 border-primary text-primary hover:bg-primary hover:text-primary-foreground">
+                            <Button
+                                as="a"
+                                href={`https://github.com/${project.username}/${project.repoName}`}
+                                target="_blank"
+                                rel="noopener noreferrer"
+                                variant="outline"
+                                className="w-full mt-4 border-primary text-primary hover:bg-primary hover:text-primary-foreground"
+                            >
                               <Github className="mr-2 h-4 w-4" />
                               View on GitHub
                             </Button>
@@ -179,4 +212,4 @@ export default function HomePage() {
         </main>
       </div>
   );
-}
+} 
