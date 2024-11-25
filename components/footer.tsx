@@ -2,12 +2,13 @@ import {DollarSign, FileText, Github, Mail, Server, Target} from "lucide-react";
 import Link from "next/link";
 import {Button} from "@/components/ui/button";
 import React from "react";
+import Image from "next/image";
 
 export function Footer() {
     return (
-        <footer className="bg-gray-900 text-white py-12">
+        <footer className="bg-gray-900 text-white py-8">
             <div className="container mx-auto px-4">
-                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
+                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
                     <div className="space-y-4">
                         <h3 className="text-2xl font-bold">ByteStore</h3>
                         <p className="text-sm text-gray-400">Empowering developers with cutting-edge artifact
@@ -33,7 +34,7 @@ export function Footer() {
                             </a>
                         </div>
                     </div>
-                    <div className="space-y-4">
+                    <div className="space-y-3">
                         <h4 className="text-lg font-semibold">Quick Links</h4>
                         <ul className="space-y-2">
                             <li>
@@ -96,7 +97,23 @@ export function Footer() {
                 <div className="mt-8 pt-8 border-t border-gray-800 text-center">
                     <p className="text-gray-400">&copy; {new Date().getFullYear()} ByteStore. All rights reserved.</p>
                     <p className="mt-2 text-sm text-gray-500">Created with ❤️ by Nathan Weisz and snowyjs</p>
-                    <p className="mt-2 text-sm text-gray-500">Frontend website partially designed with AI assistance</p>
+                </div>
+                <div className="mt-4 flex justify-center items-center">
+                    <span className="text-sm text-gray-400 mr-2">Powered by</span>
+                    <Link
+                        href="https://darkless.cloud"
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="hover:opacity-80 transition-opacity"
+                    >
+                        <Image
+                            src="/images/darkless.webp"
+                            alt="DarkLess"
+                            width={100}
+                            height={24}
+                            className="h-6 w-auto"
+                        />
+                    </Link>
                 </div>
             </div>
         </footer>

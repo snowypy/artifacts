@@ -1,21 +1,21 @@
 'use client';
 
-import { useState, useEffect, useCallback } from 'react';
+import { useState, useEffect, useCallback, MouseEvent} from 'react';
 import Link from 'next/link';
-import { useRouter } from 'next/navigation';
-import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { Github, Search, Loader2 } from 'lucide-react';
-import { useToast } from "@/hooks/use-toast";
-import { SearchResults } from "@/components/search-results";
+import {useRouter} from 'next/navigation';
+import {Button} from "@/components/ui/button";
+import {Input} from "@/components/ui/input";
+import {Card, CardContent, CardHeader, CardTitle} from "@/components/ui/card";
+import {Github, Search, Loader2} from 'lucide-react';
+import {useToast} from "@/hooks/use-toast";
+import {SearchResults} from "@/components/search-results";
 import debounce from 'lodash.debounce';
-import { Project } from '@/types/project';
-import { motion } from 'framer-motion';
+import {Project} from '@/types/project';
+import {motion} from 'framer-motion';
 
 export default function HomePage() {
   const router = useRouter();
-  const { toast } = useToast();
+  const {toast} = useToast();
   const [searchQuery, setSearchQuery] = useState('');
   const [isLoading, setIsLoading] = useState(false);
   const [searchResults, setSearchResults] = useState<Project[]>([]);
@@ -108,6 +108,12 @@ export default function HomePage() {
     debouncedSearch(searchQuery, popularProjects, newPage);
   };
 
+  const handleGithubClick = (e: MouseEvent<HTMLButtonElement, MouseEvent>, githubUrl: string | URL | undefined) => {
+    e.preventDefault();
+    e.stopPropagation();
+    window.open(githubUrl, '_blank', 'noopener noreferrer');
+  };
+
   return (
       <div className="flex flex-col min-h-screen">
         <main className="flex-grow container mx-auto px-4 py-8">
@@ -182,30 +188,34 @@ export default function HomePage() {
                 </>
             ) : (
                 <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
-                  {popularProjects.map((project) => (
-                      <Link href={`https://github.com/${project.username}/${project.repoName}`} key={project.id} target="_blank" rel="noopener noreferrer">
-                        <Card className="bg-card border-border hover:border-primary transition-colors cursor-pointer">
-                          <CardHeader>
-                            <CardTitle className="text-lg text-primary">{project.repoName}</CardTitle>
-                          </CardHeader>
-                          <CardContent>
-                            <p className="text-sm text-muted-foreground mb-2">by {project.username}</p>
-                            <p className="text-sm text-foreground">{project.downloads} downloads</p>
-                            <Button
-                                as="a"
-                                href={`https://github.com/${project.username}/${project.repoName}`}
-                                target="_blank"
-                                rel="noopener noreferrer"
-                                variant="outline"
-                                className="w-full mt-4 border-primary text-primary hover:bg-primary hover:text-primary-foreground"
-                            >
-                              <Github className="mr-2 h-4 w-4" />
-                              View on GitHub
-                            </Button>
-                          </CardContent>
-                        </Card>
-                      </Link>
-                  ))}
+                  {popularProjects.map((project) => {
+                    const githubUrl = `https://github.com/${project.username}/${project.repoName}`;
+
+                    return (
+                        <Link
+                            href={`/projects/${project.username}/${project.repoName}`}
+                            key={project.id}
+                        >
+                          <Card className="bg-card border-border hover:border-primary transition-colors cursor-pointer">
+                            <CardHeader>
+                              <CardTitle className="text-lg text-primary">{project.repoName}</CardTitle>
+                            </CardHeader>
+                            <CardContent>
+                              <p className="text-sm text-muted-foreground mb-2">by {project.username}</p>
+                              <p className="text-sm text-foreground">{project.downloads} downloads</p>
+                              <Button
+                                  variant="outline"
+                                  className="w-full mt-4 border-primary text-primary hover:bg-primary hover:text-primary-foreground"
+                                  onClick={(e) => handleGithubClick(e, githubUrl)}
+                              >
+                                <Github className="mr-2 h-4 w-4"/>
+                                View on GitHub
+                              </Button>
+                            </CardContent>
+                          </Card>
+                        </Link>
+                    );
+                  })}
                 </div>
             )}
           </motion.section>
