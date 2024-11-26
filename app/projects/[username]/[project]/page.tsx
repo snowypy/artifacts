@@ -123,8 +123,10 @@ export default function ArtifactPage() {
         }
     };
 
-    const handleBuild = (commitId: string) => {
-        console.log(`Building commit ${commitId}`);
+    const handleBuild = async(commitId: string) => {
+        await fetch(`http://localhost:8080/api/projects/${username}/${project}/build/${commitId}`, {
+            method: 'POST',
+        });
     };
 
     if (loading) {
