@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useEffect, useCallback, MouseEvent} from 'react';
+import { useState, useEffect, useCallback} from 'react';
 import Link from 'next/link';
 import {useRouter} from 'next/navigation';
 import {Button} from "@/components/ui/button";
@@ -108,7 +108,7 @@ export default function HomePage() {
     debouncedSearch(searchQuery, popularProjects, newPage);
   };
 
-  const handleGithubClick = (e: MouseEvent<HTMLButtonElement, MouseEvent>, githubUrl: string | URL | undefined) => {
+  const handleGithubClick = (e: React.MouseEvent<HTMLButtonElement>, githubUrl: string | URL | undefined) => {
     e.preventDefault();
     e.stopPropagation();
     window.open(githubUrl, '_blank', 'noopener noreferrer');
