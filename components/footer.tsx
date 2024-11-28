@@ -38,10 +38,10 @@ export function Footer() {
                         <h4 className="text-lg font-semibold">Quick Links</h4>
                         <ul className="space-y-2">
                             <li>
-                                <Link href="/docs"
+                                <Link href="/terms"
                                       className="hover:text-gray-300 transition-colors duration-200 flex items-center">
                                     <FileText className="h-4 w-4 mr-2"/>
-                                    Documentation
+                                    Terms of Service
                                 </Link>
                             </li>
                             <li>
@@ -96,7 +96,7 @@ export function Footer() {
                 </div>
                 <div className="mt-8 pt-8 border-t border-gray-800 text-center">
                     <p className="text-gray-400">&copy; {new Date().getFullYear()} ByteStore. All rights reserved.</p>
-                    <p className="mt-2 text-sm text-gray-500">Created with ❤️ by Nathan Weisz and snowyjs</p>
+                    <p className="mt-2 text-sm text-gray-500">Created with ❤️ by Nathan Weisz and Cigan</p>
                 </div>
                 <div className="mt-4 flex justify-center items-center">
                     <span className="text-sm text-gray-400 mr-2">Powered by</span>
