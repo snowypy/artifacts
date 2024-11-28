@@ -71,10 +71,10 @@ export function Footer() {
                                 </Link>
                             </li>
                             <li>
-                                <a href="mailto:support@bytestore.dev"
+                                <a href="mailto:support@bytestore.org"
                                    className="hover:text-gray-300 transition-colors duration-200 flex items-center">
                                     <Mail className="h-4 w-4 mr-2"/>
-                                    support@bytestore.dev
+                                    support@bytestore.org
                                 </a>
                             </li>
                         </ul>
