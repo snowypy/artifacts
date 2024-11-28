@@ -1,30 +1,36 @@
 'use client';
 
-import { useState, useEffect, useCallback} from 'react';
+import { useState, useEffect, useCallback } from 'react';
 import Link from 'next/link';
 import {useRouter} from 'next/navigation';
 import {Button} from "@/components/ui/button";
 import {Input} from "@/components/ui/input";
-import {Card, CardContent, CardHeader, CardTitle} from "@/components/ui/card";
-import {Github, Search, Loader2} from 'lucide-react';
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { Github, Search, Loader2 } from 'lucide-react';
 import {useToast} from "@/hooks/use-toast";
 import {SearchResults} from "@/components/search-results";
 import debounce from 'lodash.debounce';
 import {Project} from '@/types/project';
-import {motion} from 'framer-motion';
+import { motion, AnimatePresence } from 'framer-motion';
+import { Modal } from "@/components/ui/modal";
 
 export default function HomePage() {
   const router = useRouter();
-  const {toast} = useToast();
+  const { toast } = useToast();
   const [searchQuery, setSearchQuery] = useState('');
   const [isLoading, setIsLoading] = useState(false);
   const [searchResults, setSearchResults] = useState<Project[]>([]);
   const [popularProjects, setPopularProjects] = useState<Project[]>([]);
   const [currentPage, setCurrentPage] = useState(1);
+  const [isModalOpen, setIsModalOpen] = useState(false);
   const resultsPerPage = 10;
 
   useEffect(() => {
     fetchPopularProjects();
+    const timer = setTimeout(() => {
+      setIsModalOpen(true);
+    }, 1000);
+    return () => clearTimeout(timer);
   }, []);
 
   const fetchPopularProjects = async () => {
@@ -49,32 +55,31 @@ export default function HomePage() {
   };
 
   const debouncedSearch = useCallback(
-      debounce(async (query, projects: Project[], page: number) => {
-        if (query.trim() === '') {
-          setSearchResults([]);
-          return;
-        }
-
-        setIsLoading(true);
-        try {
-          await new Promise(resolve => setTimeout(resolve, 500));
-          const filteredResults = projects.filter(project =>
-              project.repoName.toLowerCase().includes(query.toLowerCase()) ||
-              project.username.toLowerCase().includes(query.toLowerCase())
-          );
-          const paginatedResults = filteredResults.slice((page - 1) * resultsPerPage, page * resultsPerPage);
-          setSearchResults(paginatedResults);
-        } catch (error) {
-          console.error(error);
-          toast({
-            title: "Search Error",
-            description: "An error occurred while searching. Please try again.",
-          });
-        } finally {
-          setIsLoading(false);
-        }
-      }, 300),
-      [toast]
+    debounce(async (query, projects: Project[], page: number) => {
+      if (query.trim() === '') {
+        setSearchResults([]);
+        return;
+      }
+      setIsLoading(true);
+      try {
+        await new Promise(resolve => setTimeout(resolve, 500));
+        const filteredResults = projects.filter(project =>
+          project.repoName.toLowerCase().includes(query.toLowerCase()) ||
+          project.username.toLowerCase().includes(query.toLowerCase())
+        );
+        const paginatedResults = filteredResults.slice((page - 1) * resultsPerPage, page * resultsPerPage);
+        setSearchResults(paginatedResults);
+      } catch (error) {
+        console.error(error);
+        toast({
+          title: "Search Error",
+          description: "An error occurred while searching. Please try again.",
+        });
+      } finally {
+        setIsLoading(false);
+      }
+    }, 300),
+    [toast]
   );
 
   useEffect(() => {
@@ -83,7 +88,6 @@ export default function HomePage() {
 
   const handleSearch = (e: React.FormEvent) => {
     e.preventDefault();
-
     const trimmedQuery = searchQuery.trim();
     if (!trimmedQuery) {
       toast({
@@ -92,9 +96,7 @@ export default function HomePage() {
       });
       return;
     }
-
     const isValidFormat = /^[a-zA-Z0-9_-]+\/[a-zA-Z0-9_-]+$/.test(trimmedQuery);
-
     if (isValidFormat) {
       router.push(`/projects/${trimmedQuery}`);
     } else {
@@ -115,8 +117,50 @@ export default function HomePage() {
   };
 
   return (
-      <div className="flex flex-col min-h-screen">
-        <main className="flex-grow container mx-auto px-4 py-8">
+    <div className="flex flex-col min-h-screen">
+      <main className="flex-grow container mx-auto px-4 py-8">
+        <motion.section
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.5 }}
+        >
+          <AnimatePresence>
+            {isModalOpen && (
+              <motion.div
+                exit={{ opacity: 0 }}
+              >
+                <Modal onClose={() => setIsModalOpen(false)}>
+                  <Card>
+                    <CardHeader>
+                      <CardTitle>ByteStore Beta</CardTitle>
+                    </CardHeader>
+                    <CardContent>
+                      <p>ByteStore is still in beta, PLEASE report all issues below.</p>
+                      <p>If you love Bytestore as much as us, consider Donating!</p>
+                      <div className="mt-4 flex justify-between items-center">
+                        <div className="flex space-x-4">
+                          <Link href="https://github.com/snowypy/ByteStore-Frontend/issues">
+                            <Button variant="link">Report an Issue</Button>
+                          </Link>
+                          <Link href="/donate">
+                            <Button variant="link">Donate</Button>
+                          </Link>
+                        </div>
+                        <Button 
+                          onClick={() => setIsModalOpen(false)} 
+                          variant="outline" 
+                          className="text-red-500 hover:bg-red-500 hover:text-white"
+                        >
+                          Close
+                        </Button>
+                      </div>
+                    </CardContent>
+                  </Card>
+                </Modal>
+              </motion.div>
+            )}
+          </AnimatePresence>
+        </motion.section>
           <motion.section
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
@@ -222,4 +266,4 @@ export default function HomePage() {
         </main>
       </div>
   );
-} 
+}
