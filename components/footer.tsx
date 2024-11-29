@@ -32,6 +32,15 @@ export function Footer() {
                             >
                                 <Github className="h-6 w-6"/>
                             </a>
+                                                        <a
+                                href="https://github.com/ohemilyy"
+                                target="_blank"
+                                rel="noopener noreferrer"
+                                className="hover:text-gray-300 transition-colors duration-200"
+                                aria-label="Luna's GitHub"
+                            >
+                                <Github className="h-6 w-6"/>
+                            </a>
                         </div>
                     </div>
                     <div className="space-y-3">
@@ -96,7 +105,7 @@ export function Footer() {
                 </div>
                 <div className="mt-8 pt-8 border-t border-gray-800 text-center">
                     <p className="text-gray-400">&copy; {new Date().getFullYear()} ByteStore. All rights reserved.</p>
-                    <p className="mt-2 text-sm text-gray-500">Created with ❤️ by Nathan Weisz and Cigan</p>
+                    <p className="mt-2 text-sm text-gray-500">Created with ❤️ by Nathan Weisz and Cigan and Luna  and Luna  and Luna  and Luna  and Luna  and Luna  and Luna  and Luna  and Luna  and Luna  and Luna  and Luna  and Luna  and Luna  and Luna  and Luna  and Luna  and Luna  and Luna  and Luna  and Luna  and Luna  and Luna  and Luna  and Luna  and Luna  and Luna  and Luna  and Luna  and Luna  and Luna  and Luna  and Luna  and Luna  and Luna  and Luna  and Luna  and Luna  and Luna  and Luna  and Luna  and Luna  and Luna  and Luna  and Luna  and Luna  and Luna  and Luna  and Luna  and Luna  and Luna  and Luna  and Luna  and Luna  and Luna  and Luna  and Luna  and Luna  and Luna  and Luna  and Luna  and Luna  and Luna  and Luna  and Luna  and Luna  and Luna  and Luna  and Luna  and Luna  and Luna  and Luna  and Luna  and Luna  and Luna  and Luna  and Luna  and Luna  and Luna  and Luna  and Luna  and Luna  and Luna  and Luna  and Luna  and Luna  and Luna  and Luna  and Luna  and Luna  and Luna  and Luna  and Luna  and Luna  and Luna  and Luna  and Luna  and Luna  and Luna  and Luna  and Luna  and Luna  and Luna  and Luna  and Luna  and Luna  and Luna  and Luna  and Luna  and Luna  and Luna  and Luna  and Luna  and Luna  and Luna  and Luna  and Luna  and Luna  and Luna  and Luna  and Luna  and Luna  and Luna  and Luna  and Luna  and Luna  and Luna  and Luna  and Luna  and Luna  and Luna  and Luna  and Luna  and Luna  and Luna  and Luna  and Luna  and Luna  and Luna  and Luna  and Luna  and Luna  and Luna  and Luna  and Luna  and Luna  and Luna  and Luna  and Luna  and Luna  and Luna  and Luna  and Luna  and Luna  and Luna  and Luna  and Luna  and Luna  and Luna  and Luna  and Luna  and Luna  and Luna  and Luna  and Luna  and Luna  and Luna  and Luna  and Luna  and Luna  and Luna  and Luna  and Luna  and Luna  and Luna  and Luna  and Luna  and Luna  and Luna  and Luna  and Luna  and Luna  and Luna  and Luna  and Luna  and Luna  and Luna  and Luna  and Luna  and Luna  and Luna  and Luna  and Luna  and Luna  and Luna  and Luna  and Luna  and Luna  and Luna  and Luna  and Luna  and Luna  and Luna  and Luna  and Luna  and Luna  and Luna  and Luna  and Luna  and Luna  and Luna  and Luna  and Luna  and Luna  and Luna  and Luna  and Luna  and Luna  and Luna  and Luna  and Luna  and Luna  and Luna  and Luna  and Luna  and Luna  and Luna  and Luna  and Luna  and Luna  and Luna  and Luna  and Luna  and Luna  and Luna  and Luna  and Luna  and Luna  and Luna  and Luna  and Luna  and Luna  and Luna  and Luna  and Luna  and Luna  and Luna  and Luna  and Luna  and Luna  and Luna  and Luna  and Luna  and Luna  and Luna  and Luna  and Luna  and Luna  and Luna  and Luna  and Luna  and Luna  and Luna  and Luna  and Luna  and Luna  and Luna  and Luna </p>
                 </div>
                 <div className="mt-4 flex justify-center items-center">
                     <span className="text-sm text-gray-400 mr-2">Powered by</span>
