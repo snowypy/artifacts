@@ -4,8 +4,8 @@
 /node_modules
 /.pnp
 /.next
-/bytestore/.next
-/bytestore/node_modules
+/artifacts/.next
+/artifacts/node_modules
 .pnp.*
 .yarn/*
 !.yarn/patches

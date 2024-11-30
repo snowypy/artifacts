@@ -18,7 +18,7 @@ export default function Contact() {
             <div className="space-y-4">
               <div className="flex items-center space-x-4">
                 <Mail className="h-6 w-6 text-gray-400" />
-                <span className="text-gray-300">support@bytestore.org</span>
+                <span className="text-gray-300">support@artifacts.?</span>
               </div>
             </div>
           </div>
@@ -58,7 +58,7 @@ export default function Contact() {
                 </label>
                 <textarea
                   id="message"
-                  rows="5"
+                  rows={5}
                   placeholder="Your Message"
                   className="w-full px-4 py-2 bg-gray-700 text-gray-100 border border-gray-600 rounded-md focus:outline-none focus:ring-2 focus:ring-gray-500"
                 />

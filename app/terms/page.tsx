@@ -21,7 +21,7 @@ export default function TermsPage() {
             </CardHeader>
             <CardContent className="text-left space-y-4">
               <p className="text-lg">
-                Welcome to ByteStore. By using our services, you agree to the following terms and conditions.
+                Welcome to Artifacts. By using our services, you agree to the following terms and conditions.
               </p>
               <h2 className="text-xl font-semibold">
                 <span className="text-primary">1.</span> Introduction

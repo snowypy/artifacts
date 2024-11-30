@@ -10,7 +10,7 @@ export function Footer() {
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
 
           <div>
-            <h3 className="text-2xl font-bold mb-2">ByteStore</h3>
+            <h3 className="text-2xl font-bold mb-2">Artifacts</h3>
             <p className="text-sm text-gray-400">
               Empowering developers with cutting-edge artifact management.
             </p>
@@ -40,7 +40,7 @@ export function Footer() {
               {[
                 { href: "/terms", label: "Terms of Service", icon: FileText },
                 { href: "/goals", label: "Our Goals", icon: Target },
-                { href: "/fund", label: "ByteStore Fund", icon: DollarSign },
+                { href: "/fund", label: "Artifacts Fund", icon: DollarSign },
               ].map(({ href, label, icon: Icon }, index) => (
                 <li key={index}>
                   <Link href={href} className="flex items-center hover:text-gray-300 transition-colors">
@@ -63,11 +63,11 @@ export function Footer() {
               </li>
               <li>
                 <a
-                  href="mailto:support@bytestore.org"
+                  href="mailto:support@artifacts.?"
                   className="flex items-center hover:text-gray-300 transition-colors"
                 >
                   <Mail className="h-4 w-4 mr-2" />
-                  support@bytestore.org
+                  support@artifacts.?
                 </a>
               </li>
             </ul>
@@ -95,10 +95,10 @@ export function Footer() {
 
         <div className="mt-8 pt-8 border-t border-gray-800 text-center text-sm text-gray-400">
           <p>
-            &copy; {new Date().getFullYear()} ByteStore. All rights reserved.
+            &copy; {new Date().getFullYear()} Artifacts. All rights reserved.
           </p>
           <p className="mt-2 text-gray-500">
-            Created with ❤️ by Nathan Weisz, Cigan, and Luna
+            Created with ❤️ by Nathan, Cigan, and Luna
           </p>
           <div className="mt-4 flex justify-center items-center">
             <span className="mr-2">Powered by</span>

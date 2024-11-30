@@ -132,11 +132,11 @@ export default function HomePage() {
                 <Modal onClose={() => setIsModalOpen(false)}>
                   <Card>
                     <CardHeader>
-                      <CardTitle>ByteStore Beta</CardTitle>
+                      <CardTitle>Artifacts Beta</CardTitle>
                     </CardHeader>
                     <CardContent>
-                      <p>ByteStore is still in beta, PLEASE report all issues below.</p>
-                      <p>If you love Bytestore as much as us, consider Donating!</p>
+                      <p>Artifacts is still in beta, PLEASE report all issues below.</p>
+                      <p>If you love Artifacts as much as us, consider Donating!</p>
                       <div className="mt-4 flex justify-between items-center">
                         <div className="flex space-x-4">
                           <Link href="https://github.com/snowypy/ByteStore-Frontend/issues">
@@ -167,7 +167,7 @@ export default function HomePage() {
               transition={{ duration: 0.5 }}
               className="text-center mb-12"
           >
-            <h1 className="text-3xl md:text-4xl lg:text-5xl font-bold mb-4 text-primary">Welcome to ByteStore</h1>
+            <h1 className="text-3xl md:text-4xl lg:text-5xl font-bold mb-4 text-primary">Welcome to Artifacts</h1>
             <p className="text-lg md:text-xl mb-8 text-muted-foreground max-w-2xl mx-auto">Build and serve Java artifacts from GitHub repositories with ease</p>
             <form onSubmit={handleSearch} className="flex flex-col sm:flex-row max-w-md mx-auto">
               <div className="relative flex-grow mb-2 sm:mb-0 sm:mr-2">
