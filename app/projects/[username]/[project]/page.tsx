@@ -33,6 +33,7 @@ export default function ArtifactPage() {
     const { username, project } = useParams<{ username: string; project: string }>();
     const [projectData, setProjectData] = useState<Project | null>(null);
     const [commits, setCommits] = useState<Commit[]>([]);
+    const [buildingCommits, setBuildingCommits] = useState<Set<string>>(new Set());
     const [loading, setLoading] = useState<boolean>(true);
     const [error, setError] = useState<string | null>(null);
     const [isModalOpen, setIsModalOpen] = useState<boolean>(false);
@@ -131,9 +132,32 @@ export default function ArtifactPage() {
     };
 
     const handleBuild = async (commitId: string) => {
-        await fetch(`http://localhost:8080/api/projects/${username}/${project}/build/${commitId}`, {
-            method: 'POST',
-        });
+        try {
+            setBuildingCommits(prev => new Set(prev).add(commitId));
+            const response = await fetch(`http://localhost:8080/api/projects/${username}/${project}/build/${commitId}`, {
+                method: 'POST',
+            });
+            if (response.ok) {
+                const buildInfo = await response.json();
+                setCommits(prevCommits =>
+                    prevCommits.map(commit =>
+                        commit.commitHash === commitId
+                            ? { ...commit, buildInfo: { ...buildInfo, status: 'IN_PROGRESS' } }
+                            : commit
+                    )
+                );
+            } else {
+                console.error('Failed to request build');
+            }
+        } catch (error) {
+            console.error('Error requesting build:', error);
+        } finally {
+            setBuildingCommits(prev => {
+                const newSet = new Set(prev);
+                newSet.delete(commitId);
+                return newSet;
+            });
+        }
     };
 
     const handleBlacklist = async () => {
