@@ -14,7 +14,7 @@ I'm 2 poor for vercel pro
 I'm 2 poor for vercel pro
 I'm 2 poor for vercel pro
 I'm 2 poor for vercel prosd
-I'm 2 poor for vercel pro
+I'm 2 poor for vercel pros
 I'm 2 poor for vercel pro
 I'm 2 poor for vercel pro
 I'm 2 poor for vercel pro
