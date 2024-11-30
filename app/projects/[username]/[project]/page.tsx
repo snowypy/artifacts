@@ -8,10 +8,10 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Skeleton } from "@/components/ui/skeleton";
-import {Package, Download, GitBranch, Clock, FileText, GitCommit } from 'lucide-react';
+import { Package, Download, GitBranch, Clock, FileText, GitCommit, HammerIcon } from 'lucide-react';
 import { DependencyModal } from '@/components/dependency-modal';
 import { motion } from "framer-motion";
-import {Project} from "@/types/project";
+import { Project } from "@/types/project";
 
 interface Commit {
     commitHash: string;
@@ -31,20 +31,21 @@ interface BuildInfo {
 
 export default function ArtifactPage() {
     const { username, project } = useParams<{ username: string; project: string }>();
-    const [ projectData, setProjectData ] = useState<Project | null>(null);
-    const [ commits, setCommits ] = useState<Commit[]>([]);
+    const [projectData, setProjectData] = useState<Project | null>(null);
+    const [commits, setCommits] = useState<Commit[]>([]);
     const [loading, setLoading] = useState<boolean>(true);
     const [error, setError] = useState<string | null>(null);
     const [isModalOpen, setIsModalOpen] = useState<boolean>(false);
     const [selectedDependency, setSelectedDependency] = useState<{ version: string; isCommit: boolean } | null>(null);
     const [activeTab, setActiveTab] = useState<string>('commits');
+    const [isAdmin, setIsAdmin] = useState<boolean>(false); 
 
     useEffect(() => {
         const fetchArtifact = async () => {
             try {
-                const res = await fetch("http://localhost:8080/api/projects/" + username + "/" + project);
+                const res = await fetch(`http://localhost:8080/api/projects/${username}/${project}`);
                 if (!res.ok) {
-                    console.log("Failed to fetch project information")
+                    console.log("Failed to fetch project information");
                     return {
                         redirect: {
                             destination: '/404',
@@ -53,7 +54,14 @@ export default function ArtifactPage() {
                     };
                 }
 
-                setProjectData(await res.json());
+                const data = await res.json();
+                setProjectData(data);
+
+
+                // Check if the user is an admin (you can adjust this logic based on how you manage roles)
+                if (data.isAdmin) {
+                    setIsAdmin(true);
+                }
             } catch (err) {
                 console.error(err);
                 setError('Failed to load project data. Please try again later.');
@@ -70,9 +78,9 @@ export default function ArtifactPage() {
 
         const fetchCommits = async () => {
             try {
-                const res = await fetch("http://localhost:8080/api/projects/" + username + "/" + project + "/commits");
+                const res = await fetch(`http://localhost:8080/api/projects/${username}/${project}/commits`);
                 if (!res.ok) {
-                    console.log("Failed to fetch commit information")
+                    console.log("Failed to fetch commit information");
                     return {
                         redirect: {
                             destination: '/404',
@@ -85,14 +93,13 @@ export default function ArtifactPage() {
             } catch (err) {
                 console.error(err);
                 setError('Failed to load commit data. Please try again later.');
-
             } finally {
                 setLoading(false);
             }
-        }
+        };
 
         fetchArtifact();
-        fetchCommits()
+        fetchCommits();
     }, [username, project]);
 
     const getStatusColor = (status: 'SUCCESS' | 'FAILED' | 'IN_PROGRESS' | 'NOT_BUILT'): string => {
@@ -123,10 +130,23 @@ export default function ArtifactPage() {
         }
     };
 
-    const handleBuild = async(commitId: string) => {
+    const handleBuild = async (commitId: string) => {
         await fetch(`http://localhost:8080/api/projects/${username}/${project}/build/${commitId}`, {
             method: 'POST',
         });
+    };
+
+    const handleBlacklist = async () => {
+        if (projectData) {
+            const res = await fetch(`http://localhost:8080/api/projects/${username}/${project}/blacklist`, {
+                method: 'POST',
+            });
+            if (res.ok) {
+                alert('Project has been blacklisted successfully.');
+            } else {
+                alert('Failed to blacklist the project.');
+            }
+        }
     };
 
     if (loading) {
@@ -170,9 +190,9 @@ export default function ArtifactPage() {
         <div className="min-h-screen bg-background">
             <main className="container mx-auto px-4 py-8">
                 <motion.div
-                    initial={{opacity: 0, y: 20}}
-                    animate={{opacity: 1, y: 0}}
-                    transition={{duration: 0.5}}
+                    initial={{ opacity: 0, y: 20 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    transition={{ duration: 0.5 }}
                     className="mb-8"
                 >
                     <h1 className="text-4xl font-bold mb-2">{projectData.repoName}</h1>
@@ -183,127 +203,60 @@ export default function ArtifactPage() {
                             Latest: v1.0
                         </Badge>
                         <Button onClick={() => {
-                            setSelectedDependency({version: "1.0", isCommit: false});
+                            setSelectedDependency({ version: "1.0", isCommit: false });
                             setIsModalOpen(true);
                         }}>
-                            <Package className="mr-2 h-4 w-4"/>
+                            <Package className="mr-2 h-4 w-4" />
                             Copy Latest Dependency
                         </Button>
                         <Button variant="outline">
-                            <Download className="mr-2 h-4 w-4"/>
+                            <Download className="mr-2 h-4 w-4" />
                             Download Latest
                         </Button>
                         <Button variant="outline" asChild>
                             <a href={`https://github.com/${username}/${project}`} target="_blank" rel="noopener noreferrer">
-                                <GitBranch className="mr-2 h-4 w-4"/>
+                                <GitBranch className="mr-2 h-4 w-4" />
                                 View on GitHub
                             </a>
                         </Button>
                     </div>
+                    {isAdmin && ( 
+                        <div className="mt-6">
+                            <Button onClick={handleBlacklist} variant="destructive">
+                                 <HammerIcon className="mr-2 h-4 w-4" />
+                                Blacklist Project
+                            </Button>
+                        </div>
+                    )
+                   }
                 </motion.div>
 
                 <Tabs defaultValue="commits" className="mb-12" onValueChange={setActiveTab}>
                     <div className="flex justify-between items-center mb-4">
-                        <h2 className="text-2xl font-semibold">{activeTab === 'commits' ? 'Recent Commits' : 'Releases'}</h2>
-                        <TabsList className="flex space-x-2">
-                            <TabsTrigger value="commits" className="px-4 py-2 rounded">Commits</TabsTrigger>
-                            <TabsTrigger value="releases" className="px-4 py-2 rounded">Releases</TabsTrigger>
+                        <TabsList>
+                            <TabsTrigger value="commits">Commits</TabsTrigger>
+                            <TabsTrigger value="builds">Builds</TabsTrigger>
                         </TabsList>
                     </div>
                     <TabsContent value="commits">
-                        <div className="space-y-4">
-                            {commits.map((commit, index) => (
-                                <motion.div
-                                    key={commit.commitHash}
-                                    initial={{opacity: 0, y: 20}}
-                                    animate={{opacity: 1, y: 0}}
-                                    transition={{duration: 0.3, delay: index * 0.1}}
-                                >
-                                    <Card
-                                        className="overflow-hidden bg-card hover:shadow-md transition-shadow duration-300">
-                                        <div className={`h-2 ${getStatusColor(commit.buildInfo != null ? commit.buildInfo.status : "NOT_BUILT")}`}/>
-                                        <CardHeader>
-                                            <CardTitle className="flex justify-between items-center">
-                                        <span className="flex items-center">
-                                            <GitCommit className="mr-2 h-4 w-4"/>
-                                            {commit.commitHash.substring(0, 7)}
-                                        </span>
-                                                <Badge
-                                                    variant={commit.buildInfo != null && commit.buildInfo.status === 'SUCCESS' ? 'default' : 'secondary'}>
-                                                    {getBuildStatusText(commit.buildInfo != null ? commit.buildInfo.status : "NOT_BUILT")}
-                                                </Badge>
-                                            </CardTitle>
-                                        </CardHeader>
-                                        <CardContent>
-                                            <p className="mb-2 font-medium">{commit.commitMessage}</p>
-                                            <div className="flex flex-wrap gap-4 text-sm text-muted-foreground">
-                                        <span className="flex items-center">
-                                            <Clock className="mr-1 h-4 w-4"/>
-                                            {commit.date}
-                                        </span>
-                                                <span className="flex items-center">
-                                            Author: {commit.author}
-                                        </span>
-                                            </div>
-                                            <div className="mt-4 flex flex-wrap gap-2 justify-between">
-                                                <div className="flex flex-wrap gap-2">
-                                                    <Button variant="outline" size="sm" asChild>
-                                                        <a href={`https://github.com/${username}/${project}/commit/${commit.commitHash}`}
-                                                           target="_blank" rel="noopener noreferrer">
-                                                            <GitBranch className="mr-2 h-4 w-4"/>
-                                                            View on GitHub
-                                                        </a>
-                                                    </Button>
-                                                    {commit.buildInfo != null && (
-                                                        <Button variant="outline" size="sm">
-                                                            <FileText className="mr-2 h-4 w-4"/>
-                                                            {commit.buildInfo.status === 'IN_PROGRESS' ? 'View Build Progress' : 'Build Logs'}
-                                                        </Button>
-                                                    )}
-                                                    <Button
-                                                        variant="outline"
-                                                        size="sm"
-                                                        onClick={() => {
-                                                            setSelectedDependency({version: commit.commitHash, isCommit: true});
-                                                            setIsModalOpen(true);
-                                                        }}
-                                                    >
-                                                        <Package className="mr-2 h-4 w-4"/>
-                                                        Copy Dependency
-                                                    </Button>
-                                                </div>
-                                                {commit.buildInfo == null && (
-                                                    <Button variant="default" size="sm"
-                                                            className="bg-blue-500 hover:bg-blue-600 text-white"
-                                                            onClick={() => handleBuild(commit.commitHash)}>
-                                                        <FileText className="mr-2 h-4 w-4"/>
-                                                        Request Build
-                                                    </Button>
-                                                )}
-                                            </div>
-                                        </CardContent>
-                                    </Card>
-                                </motion.div>
-                            ))}
-                        </div>
-                    </TabsContent>
-                    <TabsContent value="releases">
+                        {commits.length > 0 ? (
+                            commits.map((commit, idx) => (
+                                <Card key={idx} className="mb-4">
+                                    <CardHeader>
+                                        <CardTitle>{commit.commitMessage}</CardTitle>
+                                    </CardHeader>
+                                    <CardContent>
+                                        <p className="text-sm">{commit.author}</p>
+                                        <p className="text-sm">{commit.date}</p>
+                                    </CardContent>
+                                </Card>
+                            ))
+                        ) : (
+                            <p>No commits found.</p>
+                        )}
                     </TabsContent>
                 </Tabs>
             </main>
-
-            {project && selectedDependency && (
-                <DependencyModal
-                    isOpen={isModalOpen}
-                    onClose={() => {
-                        setIsModalOpen(false);
-                        setSelectedDependency(null);
-                    }}
-                    project={projectData}
-                    version={selectedDependency.version}
-                    isCommit={selectedDependency.isCommit}
-                />
-            )}
         </div>
     );
 }
