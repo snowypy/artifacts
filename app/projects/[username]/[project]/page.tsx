@@ -239,21 +239,83 @@ export default function ArtifactPage() {
                         </TabsList>
                     </div>
                     <TabsContent value="commits">
-                        {commits.length > 0 ? (
-                            commits.map((commit, idx) => (
-                                <Card key={idx} className="mb-4">
-                                    <CardHeader>
-                                        <CardTitle>{commit.commitMessage}</CardTitle>
-                                    </CardHeader>
-                                    <CardContent>
-                                        <p className="text-sm">{commit.author}</p>
-                                        <p className="text-sm">{commit.date}</p>
-                                    </CardContent>
-                                </Card>
-                            ))
-                        ) : (
-                            <p>No commits found.</p>
-                        )}
+                        <div className="space-y-4">
+                            {commits.map((commit, index) => (
+                                <motion.div
+                                    key={commit.commitHash}
+                                    initial={{opacity: 0, y: 20}}
+                                    animate={{opacity: 1, y: 0}}
+                                    transition={{duration: 0.3, delay: index * 0.1}}
+                                >
+                                    <Card
+                                        className="overflow-hidden bg-card hover:shadow-md transition-shadow duration-300">
+                                        <div className={`h-2 ${getStatusColor(commit.buildInfo != null ? commit.buildInfo.status : "NOT_BUILT")}`}/>
+                                        <CardHeader>
+                                            <CardTitle className="flex justify-between items-center">
+                                        <span className="flex items-center">
+                                            <GitCommit className="mr-2 h-4 w-4"/>
+                                            {commit.commitHash.substring(0, 7)}
+                                        </span>
+                                                <Badge
+                                                    variant={commit.buildInfo != null && commit.buildInfo.status === 'SUCCESS' ? 'default' : 'secondary'}>
+                                                    {getBuildStatusText(commit.buildInfo != null ? commit.buildInfo.status : "NOT_BUILT")}
+                                                </Badge>
+                                            </CardTitle>
+                                        </CardHeader>
+                                        <CardContent>
+                                            <p className="mb-2 font-medium">{commit.commitMessage}</p>
+                                            <div className="flex flex-wrap gap-4 text-sm text-muted-foreground">
+                                        <span className="flex items-center">
+                                            <Clock className="mr-1 h-4 w-4"/>
+                                            {commit.date}
+                                        </span>
+                                                <span className="flex items-center">
+                                            Author: {commit.author}
+                                        </span>
+                                            </div>
+                                            <div className="mt-4 flex flex-wrap gap-2 justify-between">
+                                                <div className="flex flex-wrap gap-2">
+                                                    <Button variant="outline" size="sm" asChild>
+                                                        <a href={`https://github.com/${username}/${project}/commit/${commit.commitHash}`}
+                                                           target="_blank" rel="noopener noreferrer">
+                                                            <GitBranch className="mr-2 h-4 w-4"/>
+                                                            View on GitHub
+                                                        </a>
+                                                    </Button>
+                                                    {commit.buildInfo != null && (
+                                                        <Button variant="outline" size="sm">
+                                                            <FileText className="mr-2 h-4 w-4"/>
+                                                            {commit.buildInfo.status === 'IN_PROGRESS' ? 'View Build Progress' : 'Build Logs'}
+                                                        </Button>
+                                                    )}
+                                                    <Button
+                                                        variant="outline"
+                                                        size="sm"
+                                                        onClick={() => {
+                                                            setSelectedDependency({version: commit.commitHash, isCommit: true});
+                                                            setIsModalOpen(true);
+                                                        }}
+                                                    >
+                                                        <Package className="mr-2 h-4 w-4"/>
+                                                        Copy Dependency
+                                                    </Button>
+                                                </div>
+                                                {commit.buildInfo == null && (
+                                                    <Button variant="default" size="sm"
+                                                            className="bg-blue-500 hover:bg-blue-600 text-white"
+                                                            onClick={() => handleBuild(commit.commitHash)}>
+                                                        <FileText className="mr-2 h-4 w-4"/>
+                                                        Request Build
+                                                    </Button>
+                                                )}
+                                            </div>
+                                        </CardContent>
+                                    </Card>
+                                </motion.div>
+                            ))}
+                        </div>
+                    </TabsContent>
+                    <TabsContent value="releases">
                     </TabsContent>
                 </Tabs>
             </main>
