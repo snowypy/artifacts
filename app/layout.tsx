@@ -7,7 +7,7 @@ import {AuthProvider} from "@/context/auth-context";
 import {Header} from "@/components/header";
 import {Footer} from "@/components/footer";
 export const metadata: Metadata = {
-  title: 'ByteStore',
+  title: 'Artifacts',
   description: 'Build and serve Java artifacts from GitHub repositories with ease',
 }
 

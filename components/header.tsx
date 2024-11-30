@@ -14,7 +14,7 @@ export function Header() {
             <div className="container mx-auto px-4 py-4 flex justify-between items-center">
                 <Link href="/" className="text-xl md:text-2xl font-bold flex items-center text-primary">
                     <Package className="mr-2 h-6 w-6 md:h-8 md:w-8" />
-                    <span className="hidden sm:inline">ByteStore</span>
+                    <span className="hidden sm:inline">Artifacts</span>
                 </Link>
                 <nav className="hidden md:block">
                     <ul className="flex space-x-4">

@@ -25,9 +25,9 @@ export default function LoginPage() {
         >
           <Card className="w-full max-w-md bg-card">
             <CardHeader className="space-y-1">
-              <CardTitle className="text-2xl text-center">Sign in to ByteStore</CardTitle>
+              <CardTitle className="text-2xl text-center">Sign in to Artifacts</CardTitle>
               <CardDescription className="text-center">
-                Use your GitHub account to access ByteStore
+                Use your GitHub account to access Artifacts
               </CardDescription>
             </CardHeader>
             <CardContent className="flex justify-center">
