@@ -1,4 +1,4 @@
-force push, remake readme later :3 **again**
+aforce push, remake readme later :3 **again**
 
 I'm 2 poor for vercel pro
 I'm 2 poor for vercel pro
@@ -13,7 +13,7 @@ I'm 2 poor for vercel pro
 I'm 2 poor for vercel pro
 I'm 2 poor for vercel pro
 I'm 2 poor for vercel pro
-I'm 2 poor for vercel pro
+I'm 2 poor for vercel prosd
 I'm 2 poor for vercel pro
 I'm 2 poor for vercel pro
 I'm 2 poor for vercel pro
