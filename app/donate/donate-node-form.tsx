@@ -12,7 +12,7 @@ import { toast } from "@/hooks/use-toast"
 import { donateNode } from "./actions"
 
 export async function getServerSideProps(context: { req: { headers: { cookie: any } } }) {
-    const res = await fetch('http://localhost:8080/api/user', {
+    const res = await fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL}/api/user`, {
         headers: {
             Cookie: context.req.headers.cookie,
         },
