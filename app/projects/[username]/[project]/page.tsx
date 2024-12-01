@@ -146,6 +146,27 @@ export default function ArtifactPage() {
                             : commit
                     )
                 );
+    
+                const intervalId = setInterval(async () => {
+                    const statusResponse = await fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL}/api/projects/${username}/${project}/build/${commitId}/status`);
+                    if (statusResponse.ok) {
+                        const statusData = await statusResponse.json();
+                        setCommits(prevCommits =>
+                            prevCommits.map(commit =>
+                                commit.commitHash === commitId
+                                    ? { ...commit, buildInfo: { ...statusData } }
+                                    : commit
+                            )
+                        );
+    
+                        if (statusData.status !== 'IN_PROGRESS') {
+                            clearInterval(intervalId);
+                        }
+                    } else {
+                        console.error('Failed to fetch build status');
+                        clearInterval(intervalId);
+                    }
+                }, 5000); // [:] Counted in milliseconds (5 seconds)
             } else {
                 console.error('Failed to request build');
             }
