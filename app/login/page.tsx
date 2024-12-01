@@ -10,7 +10,7 @@ import type { SimpleIcon } from 'simple-icons';
 export default function LoginPage() {
 
   const handleGitHubLogin = async () => {
-    window.location.href = 'http://localhost:8080/oauth2/authorization/github';
+    window.location.href = `${process.env.NEXT_PUBLIC_BACKEND_URL}/oauth2/authorization/github`;
   }
 
   return (
