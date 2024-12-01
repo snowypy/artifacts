@@ -15,14 +15,15 @@ interface DependencyModalProps {
 
 export function DependencyModal({ isOpen, onClose, project, version, isCommit }: DependencyModalProps) {
     const [copiedTab, setCopiedTab] = useState<string | null>(null);
-
+    const displayVersion = isCommit ? version.substring(0, 7) : version;
+    
     const mavenDependency = `<dependency>
   <groupId>com.github.${project.username.toLowerCase()}</groupId>
   <artifactId>${project.repoName}</artifactId>
-  <version>${isCommit ? version + '-SNAPSHOT' : version}</version>
+  <version>${isCommit ? displayVersion + '-SNAPSHOT' : displayVersion}</version>
 </dependency>`;
 
-    const gradleDependency = `implementation 'com.github.${project.username.toLowerCase()}:${project.repoName}:${isCommit ? version + '-SNAPSHOT' : version}'`;
+    const gradleDependency = `implementation 'com.github.${project.username.toLowerCase()}:${project.repoName}:${isCommit ? displayVersion + '-SNAPSHOT' : displayVersion}'`;
 
     const copyToClipboard = (text: string, tab: string) => {
         navigator.clipboard.writeText(text);
@@ -36,7 +37,7 @@ export function DependencyModal({ isOpen, onClose, project, version, isCommit }:
                 <DialogHeader>
                     <DialogTitle>Copy Dependency</DialogTitle>
                     <DialogDescription>
-                        Copy the dependency configuration for {isCommit ? `commit ${version.substring(0, 7)}` : `version ${version}`}.
+                        Copy the dependency configuration for {isCommit ? `commit ${displayVersion}` : `version ${displayVersion}`}.
                     </DialogDescription>
                 </DialogHeader>
                 <Tabs defaultValue="maven" className="w-full">
@@ -45,9 +46,9 @@ export function DependencyModal({ isOpen, onClose, project, version, isCommit }:
                         <TabsTrigger value="gradle">Gradle</TabsTrigger>
                     </TabsList>
                     <TabsContent value="maven">
-            <pre className="bg-muted p-4 rounded-md overflow-x-auto whitespace-pre-wrap break-all">
-              <code>{mavenDependency}</code>
-            </pre>
+                        <pre className="bg-muted p-4 rounded-md overflow-x-auto whitespace-pre-wrap break-all">
+                            <code>{mavenDependency}</code>
+                        </pre>
                         <Button
                             onClick={() => copyToClipboard(mavenDependency, 'maven')}
                             className="mt-2 w-full text-sm"
@@ -68,9 +69,9 @@ export function DependencyModal({ isOpen, onClose, project, version, isCommit }:
                         </Button>
                     </TabsContent>
                     <TabsContent value="gradle">
-            <pre className="bg-muted p-4 rounded-md overflow-x-auto whitespace-pre-wrap break-all">
-              <code>{gradleDependency}</code>
-            </pre>
+                        <pre className="bg-muted p-4 rounded-md overflow-x-auto whitespace-pre-wrap break-all">
+                            <code>{gradleDependency}</code>
+                        </pre>
                         <Button
                             onClick={() => copyToClipboard(gradleDependency, 'gradle')}
                             className="mt-2 w-full text-sm"
