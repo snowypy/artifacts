@@ -21,7 +21,7 @@ export function AuthProvider({ children }: AuthProviderProps) {
 
     const checkAuth = async (): Promise<void> => {
         try {
-            const response = await fetch('http://localhost:8080/api/user/me', {
+            const response = await fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL}/api/user/me`, {
                 credentials: 'include',
             });
 
@@ -49,7 +49,7 @@ export function AuthProvider({ children }: AuthProviderProps) {
 
     const logout = async (): Promise<void> => {
         try {
-            const response = await fetch('http://localhost:8080/api/auth/logout', {
+            const response = await fetch('${process.env.NEXT_PUBLIC_BACKEND_URL}/api/auth/logout', {
                 method: 'POST',
                 credentials: 'include',
                 headers: {
