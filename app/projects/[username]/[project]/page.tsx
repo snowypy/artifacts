@@ -44,7 +44,7 @@ export default function ArtifactPage() {
     useEffect(() => {
         const fetchArtifact = async () => {
             try {
-                const res = await fetch(`http://localhost:8080/api/projects/${username}/${project}`);
+                const res = await fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL}/api/projects/${username}/${project}`);
                 if (!res.ok) {
                     console.log("Failed to fetch project information");
                     return {
@@ -79,7 +79,7 @@ export default function ArtifactPage() {
 
         const fetchCommits = async () => {
             try {
-                const res = await fetch(`http://localhost:8080/api/projects/${username}/${project}/commits`);
+                const res = await fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL}/api/projects/${username}/${project}/commits`);
                 if (!res.ok) {
                     console.log("Failed to fetch commit information");
                     return {
@@ -134,7 +134,7 @@ export default function ArtifactPage() {
     const handleBuild = async (commitId: string) => {
         try {
             setBuildingCommits(prev => new Set(prev).add(commitId));
-            const response = await fetch(`http://localhost:8080/api/projects/${username}/${project}/build/${commitId}`, {
+            const response = await fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL}/api/projects/${username}/${project}/build/${commitId}`, {
                 method: 'POST',
             });
             if (response.ok) {
@@ -162,7 +162,7 @@ export default function ArtifactPage() {
 
     const handleBlacklist = async () => {
         if (projectData) {
-            const res = await fetch(`http://localhost:8080/api/projects/${username}/${project}/blacklist`, {
+            const res = await fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL}/api/projects/${username}/${project}/blacklist`, {
                 method: 'POST',
             });
             if (res.ok) {
@@ -219,6 +219,13 @@ export default function ArtifactPage() {
                     transition={{ duration: 0.5 }}
                     className="mb-8"
                 >
+                    <DependencyModal
+                    isOpen={isModalOpen}
+                    onClose={() => setIsModalOpen(false)}
+                    project={projectData}
+                    version={selectedDependency?.version || ''}
+                    isCommit={selectedDependency?.isCommit || false}
+                    />
                     <h1 className="text-4xl font-bold mb-2">{projectData.repoName}</h1>
                     <p className="text-xl text-muted-foreground mb-4">com.github.{projectData.username.toLowerCase()}</p>
                     <p className="text-lg mb-4">This is an example description because we are too lazy to implement description rn.</p>
@@ -259,7 +266,7 @@ export default function ArtifactPage() {
                     <div className="flex justify-between items-center mb-4">
                         <TabsList>
                             <TabsTrigger value="commits">Commits</TabsTrigger>
-                            <TabsTrigger value="builds">Builds</TabsTrigger>
+                            <TabsTrigger value="builds">Releases</TabsTrigger>
                         </TabsList>
                     </div>
                     <TabsContent value="commits">
