@@ -1,9 +1,37 @@
+'use client';
+
 import { DollarSign, FileText, Github, Mail, Server, Target } from "lucide-react";
 import Link from "next/link";
 import { Button } from "@/components/ui/button";
 import Image from "next/image";
+import { useState } from "react";
+import { FormEvent } from "react";
 
 export function Footer() {
+  const [email, setEmail] = useState("");
+
+  const handleSubmit = async (event: FormEvent<HTMLFormElement>) => {
+    event.preventDefault();
+    try {
+      const response = await fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL}/api/newsletter/signup`, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({ email }),
+      });
+
+      if (response.ok) {
+        alert("Subscribed successfully!");
+      } else {
+        alert("Failed to subscribe.");
+      }
+    } catch (error) {
+      console.error("Error subscribing:", error);
+      alert("An error occurred. Please try again.");
+    }
+  };
+
   return (
     <footer className="bg-gray-900 text-white py-8">
       <div className="container mx-auto px-4">
@@ -39,8 +67,7 @@ export function Footer() {
             <ul className="space-y-2">
               {[
                 { href: "/terms", label: "Terms of Service", icon: FileText },
-                { href: "/goals", label: "Our Goals", icon: Target },
-                { href: "/fund", label: "Artifacts Fund", icon: DollarSign },
+                { href: "/privacy", label: "Privacy Policy", icon: Target },
               ].map(({ href, label, icon: Icon }, index) => (
                 <li key={index}>
                   <Link href={href} className="flex items-center hover:text-gray-300 transition-colors">
@@ -79,10 +106,12 @@ export function Footer() {
             <p className="text-sm text-gray-400 mb-3">
               Stay updated with our latest features and releases.
             </p>
-            <form className="flex flex-col space-y-2">
+            <form className="flex flex-col space-y-2" onSubmit={handleSubmit}>
               <input
                 type="email"
                 placeholder="Enter your email"
+                value={email}
+                onChange={(e) => setEmail(e.target.value)}
                 className="px-3 py-2 bg-gray-800 rounded-md text-white placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-gray-700"
               />
               <Button type="submit" variant="secondary" className="w-full">
