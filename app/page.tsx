@@ -36,7 +36,7 @@ export default function HomePage() {
   const fetchPopularProjects = async () => {
     try {
       setIsLoading(true);
-      const response = await fetch(`http://localhost:8080/api/projects/top`);
+      const response = await fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL}/api/projects/top`);
       if (!response.ok) {
         throw new Error('Failed to fetch popular projects');
       }
