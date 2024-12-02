@@ -204,63 +204,49 @@ export default function HomePage() {
               transition={{ duration: 0.5, delay: 0.2 }}
               aria-live="polite"
           >
-            <h2 className="text-2xl font-semibold mb-4 text-primary">
-              {searchQuery ? 'Search Results' : 'Popular Artifacts'}
-            </h2>
             {isLoading ? (
-                <div className="flex justify-center items-center">
-                  <Loader2 className="h-8 w-8 animate-spin" />
-                </div>
-            ) : searchQuery ? (
-                <>
-                  <SearchResults results={searchResults} isLoading={isLoading} />
-                  <div className="flex justify-center mt-4">
-                    <Button
-                        onClick={() => handlePageChange(currentPage - 1)}
-                        disabled={currentPage === 1}
-                        className="mr-2"
-                    >
-                      Previous
-                    </Button>
-                    <Button
-                        onClick={() => handlePageChange(currentPage + 1)}
-                        disabled={searchResults.length < resultsPerPage}
-                    >
-                      Next
-                    </Button>
-                  </div>
-                </>
+              <div className="flex justify-center items-center">
+                <Loader2 className="h-8 w-8 animate-spin" />
+              </div>
             ) : (
+              <motion.div
+                initial={{ opacity: 0 }}
+                animate={{ opacity: 1 }}
+                transition={{ duration: 0.5 }}
+              >
+                <h2 className="text-2xl font-semibold mb-4 text-primary">
+                  Popular Artifacts
+                </h2>
                 <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
                   {popularProjects.map((project) => {
                     const githubUrl = `https://github.com/${project.username}/${project.repoName}`;
-
                     return (
-                        <Link
-                            href={`/projects/${project.username}/${project.repoName}`}
-                            key={project.id}
-                        >
-                          <Card className="bg-card border-border hover:border-primary transition-colors cursor-pointer">
-                            <CardHeader>
-                              <CardTitle className="text-lg text-primary">{project.repoName}</CardTitle>
-                            </CardHeader>
-                            <CardContent>
-                              <p className="text-sm text-muted-foreground mb-2">by {project.username}</p>
-                              <p className="text-sm text-foreground">{project.downloads} downloads</p>
-                              <Button
-                                  variant="outline"
-                                  className="w-full mt-4 border-primary text-primary hover:bg-primary hover:text-primary-foreground"
-                                  onClick={(e) => handleGithubClick(e, githubUrl)}
-                              >
-                                <Github className="mr-2 h-4 w-4"/>
-                                View on GitHub
-                              </Button>
-                            </CardContent>
-                          </Card>
-                        </Link>
+                      <Link
+                        href={`/projects/${project.username}/${project.repoName}`}
+                        key={project.id}
+                      >
+                        <Card className="bg-card border-border hover:border-primary transition-colors cursor-pointer">
+                          <CardHeader>
+                            <CardTitle className="text-lg text-primary">{project.repoName}</CardTitle>
+                          </CardHeader>
+                          <CardContent>
+                            <p className="text-sm text-muted-foreground mb-2">by {project.username}</p>
+                            <p className="text-sm text-foreground">{project.downloads} downloads</p>
+                            <Button
+                              variant="outline"
+                              className="w-full mt-4 border-primary text-primary hover:bg-primary hover:text-primary-foreground"
+                              onClick={(e) => handleGithubClick(e, githubUrl)}
+                            >
+                              <Github className="mr-2 h-4 w-4" />
+                              View on GitHub
+                            </Button>
+                          </CardContent>
+                        </Card>
+                      </Link>
                     );
                   })}
                 </div>
+              </motion.div>
             )}
           </motion.section>
         </main>
