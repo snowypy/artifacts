@@ -18,7 +18,7 @@ export default function Contact() {
             <div className="space-y-4">
               <div className="flex items-center space-x-4">
                 <Mail className="h-6 w-6 text-gray-400" />
-                <span className="text-gray-300">support@artifacts.?</span>
+                <span className="text-gray-300">support@artifacts.akrylic.org</span>
               </div>
             </div>
           </div>
