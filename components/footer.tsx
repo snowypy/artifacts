@@ -90,11 +90,11 @@ export function Footer() {
               </li>
               <li>
                 <a
-                  href="mailto:support@artifacts.?"
+                  href="mailto:support@artifacts.akrylic.org"
                   className="flex items-center hover:text-gray-300 transition-colors"
                 >
                   <Mail className="h-4 w-4 mr-2" />
-                  support@artifacts.?
+                  support@artifacts.akrylic.org
                 </a>
               </li>
             </ul>
