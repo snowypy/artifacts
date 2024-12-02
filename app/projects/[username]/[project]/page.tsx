@@ -142,7 +142,7 @@ export default function ArtifactPage() {
                 setCommits(prevCommits =>
                     prevCommits.map(commit =>
                         commit.commitHash === commitId
-                            ? { ...commit, buildInfo: { ...buildInfo, status: 'IN_PROGRESS' } }
+                            ? { ...commit, buildInfo: { ...buildInfo, status: buildInfo.status } }
                             : commit
                     )
                 );
