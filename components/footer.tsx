@@ -45,7 +45,7 @@ export function Footer() {
             <div className="flex space-x-4 mt-4">
               {[
                 { href: "https://github.com/nathanweisz", label: "Nathan Weisz's GitHub" },
-                { href: "https://github.com/snowyjs", label: "SnowyJS's GitHub" },
+                { href: "https://github.com/snowypy", label: "SnowyJS's GitHub" },
                 { href: "https://github.com/ohemilyy", label: "Luna's GitHub" },
               ].map(({ href, label }, index) => (
                 <a
