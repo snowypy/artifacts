@@ -124,42 +124,6 @@ export default function HomePage() {
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.5 }}
         >
-          <AnimatePresence>
-            {isModalOpen && (
-              <motion.div
-                exit={{ opacity: 0 }}
-              >
-                <Modal onClose={() => setIsModalOpen(false)}>
-                  <Card>
-                    <CardHeader>
-                      <CardTitle>Artifacts Beta</CardTitle>
-                    </CardHeader>
-                    <CardContent>
-                      <p>Artifacts is still in beta, PLEASE report all issues below.</p>
-                      <p>If you love Artifacts as much as us, consider Donating!</p>
-                      <div className="mt-4 flex justify-between items-center">
-                        <div className="flex space-x-4">
-                          <Link href="https://github.com/snowypy/ByteStore-Frontend/issues">
-                            <Button variant="link">Report an Issue</Button>
-                          </Link>
-                          <Link href="/donate">
-                            <Button variant="link">Donate</Button>
-                          </Link>
-                        </div>
-                        <Button 
-                          onClick={() => setIsModalOpen(false)} 
-                          variant="outline" 
-                          className="text-red-500 hover:bg-red-500 hover:text-white"
-                        >
-                          Close
-                        </Button>
-                      </div>
-                    </CardContent>
-                  </Card>
-                </Modal>
-              </motion.div>
-            )}
-          </AnimatePresence>
         </motion.section>
           <motion.section
               initial={{ opacity: 0, y: 20 }}
