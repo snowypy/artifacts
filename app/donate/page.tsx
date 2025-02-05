@@ -72,7 +72,7 @@ export default async function DonateNodePage() {
                             </CardTitle>
                         </CardHeader>
                         <CardContent>
-                            <p>Get recognized for your contributions to the Jitpack++ community and open-source
+                            <p>Get recognized for your contributions to the community and open-source
                                 ecosystem.</p>
                         </CardContent>
                     </Card>
@@ -88,7 +88,7 @@ export default async function DonateNodePage() {
                 <ol className="list-decimal list-inside space-y-2 text- mb-4">
                     <li>Download our node client application</li>
                     <li>Run the installer, which will set up all necessary dependencies</li>
-                    <li>Log in with your Jitpack++ account</li>
+                    <li>Log in with your account</li>
                     <li>Choose your resource allocation and availability preferences</li>
                     <li>Start the node and you&#39;re done!</li>
                 </ol>
@@ -96,8 +96,7 @@ export default async function DonateNodePage() {
                     Our node client runs in the background, using only the resources you&#39;ve allocated and respecting
                     your
                     availability preferences. You can easily monitor your node&#39;s activity and contribution through
-                    your
-                    Jitpack++ dashboard.
+                    our dashboard.
                 </p>
             </section>
 
