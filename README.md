@@ -1,6 +1,6 @@
 # Artifacts
 
-> An Open source jitpack alternative.
+> An Open source jitpack improvement.
 
 
 ## Disclosure
